@@ -10,12 +10,14 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var lastPhoto: UIImage? = nil
+    @State var isAdditionalSettingsOpen: Bool = false
 
     var body: some View {
         VStack {
             TopBarView(toggleFlash: {
                 cameraViewModel.toggleFlash()
-            }, isFlashOn: cameraViewModel.isFlashOn)
+            }, toggleAdditionalSettings: toggleAdditionalSettings, isFlashOn: cameraViewModel.isFlashOn,
+                       isAdditionalSettingsOpen: isAdditionalSettingsOpen)
             .padding(.top, 40)
             .padding(.horizontal)
             
@@ -48,6 +50,10 @@ struct ContentView: View {
         }
         .statusBar(hidden: true)
         .ignoresSafeArea()
+    }
+    
+    func toggleAdditionalSettings() {
+        isAdditionalSettingsOpen.toggle()
     }
 }
 
