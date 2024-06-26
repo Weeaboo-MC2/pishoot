@@ -12,14 +12,17 @@ struct ContentView: View {
     @State private var lastPhoto: UIImage? = nil
 
     var body: some View {
-        ZStack {
+        VStack {
+            TopBarView(toggleFlash: {
+                cameraViewModel.toggleFlash()
+            }, isFlashOn: cameraViewModel.isFlashOn)
+            .padding(.top, 40)
+            .padding(.horizontal)
+            
             CameraPreviewView(session: cameraViewModel.session)
                 .edgesIgnoringSafeArea(.all)
                 .overlay(
                     VStack {
-                        TopBarView(toggleFlash: {
-                            cameraViewModel.toggleFlash()
-                        }, isFlashOn: cameraViewModel.isFlashOn)
                         
                         Spacer()
                         
@@ -30,6 +33,7 @@ struct ContentView: View {
                         }, openPhotosApp: {
                             PhotoLibraryHelper.openPhotosApp()
                         })
+                        .padding(.bottom, 20)
                     }
                 )
         }
@@ -42,6 +46,8 @@ struct ContentView: View {
         .onDisappear {
             cameraViewModel.stopSession()
         }
+        .statusBar(hidden: true)
+        .ignoresSafeArea()
     }
 }
 

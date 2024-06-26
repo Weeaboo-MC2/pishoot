@@ -26,9 +26,9 @@ struct BottomBarView: View {
                 CaptureButton(action: captureAction)
                 Spacer()
             }
-            .padding(.horizontal)
-            .padding(.bottom, 20)
         }
+        .padding(.horizontal)
+        .padding(.bottom, 20)
     }
 }
 

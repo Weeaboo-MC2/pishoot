@@ -26,7 +26,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     private func configureSession() {
         session.beginConfiguration()
         
-        if let backWideAngleCamera = AVCaptureDevice.default(.builtInDualWideCamera, for: .video, position: .back) {
+        if let backWideAngleCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) {
             self.backWideAngleCamera = backWideAngleCamera
             configureInput(for: backWideAngleCamera)
         }

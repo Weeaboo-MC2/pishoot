@@ -19,7 +19,6 @@ struct TopBarView: View {
                 }) {
                     Image(systemName: isFlashOn ? "bolt.fill" : "bolt.slash.fill")
                         .foregroundColor(.white)
-                        .padding()
                         .background(Color.black.opacity(0.5))
                         .clipShape(Circle())
                 }
@@ -32,13 +31,12 @@ struct TopBarView: View {
             }) {
                 Image(systemName: "chevron.up")
                     .foregroundColor(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.5))
+                    .padding(10)
+                    .background(Color.gray.opacity(0.5))
                     .clipShape(Circle())
             }
         }
-        .padding(.horizontal)
-        .padding(.top, 40)
+        .padding()
     }
 }
 
