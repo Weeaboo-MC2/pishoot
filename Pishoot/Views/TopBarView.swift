@@ -17,7 +17,9 @@ struct TopBarView: View {
         ZStack {
             HStack {
                 Button(action: {
-                    toggleFlash()
+                    withAnimation {
+                        toggleFlash()
+                    }
                 }) {
                     Image(systemName: isFlashOn ? "bolt.fill" : "bolt.slash.fill")
                         .foregroundColor(.white)
@@ -30,7 +32,9 @@ struct TopBarView: View {
             }
             
             Button(action: {
-                toggleAdditionalSettings()
+                withAnimation() {
+                    toggleAdditionalSettings()
+                }
             }) {
                 Image(systemName: isAdditionalSettingsOpen ? "chevron.down" : "chevron.up")
                     .foregroundColor(.white)
