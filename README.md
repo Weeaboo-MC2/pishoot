@@ -1,4 +1,4 @@
-# MC1-Orient-Five
+# Mini Challenge 2 - Pishoot
 
 ## Git Flow Rule
 
