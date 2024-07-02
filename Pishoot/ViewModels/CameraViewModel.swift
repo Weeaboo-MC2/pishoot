@@ -4,23 +4,21 @@
 //
 //  Created by Muhammad Zikrurridho Afwani on 25/06/24.
 
-
 import SwiftUI
 import AVFoundation
-import Photos
 
 class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
     @Published var session: AVCaptureMultiCamSession?
     private var wideAngleOutput: AVCapturePhotoOutput?
     private var ultraWideOutput: AVCapturePhotoOutput?
-    
     private var wideAngleCamera: AVCaptureDevice?
     private var ultraWideCamera: AVCaptureDevice?
-    
     @Published var isFlashOn = false
     private var isCapturingPhoto = false
     private var capturedImages: [UIImage] = []
     private var completion: (([UIImage]) -> Void)?
+    @Published var isBlackScreenVisible = false
+    private var selectedZoomLevel: CGFloat = 1.0
     
     override init() {
         super.init()
@@ -35,14 +33,11 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         
         let session = AVCaptureMultiCamSession()
         self.session = session
-        
         session.beginConfiguration()
-        
         setupCamera(.builtInWideAngleCamera, to: session)
         setupCamera(.builtInUltraWideCamera, to: session)
         session.commitConfiguration()
     }
-
     
     private func setupCamera(_ deviceType: AVCaptureDevice.DeviceType, to session: AVCaptureMultiCamSession) {
         guard let device = AVCaptureDevice.default(deviceType, for: .video, position: .back) else { return }
@@ -87,6 +82,20 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         isFlashOn.toggle()
     }
     
+    private func turnTorch(on: Bool) {
+        guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
+        do {
+            try device.lockForConfiguration()
+            device.torchMode = on ? .on : .off
+            if on {
+                try device.setTorchModeOn(level: 1.0)
+            }
+            device.unlockForConfiguration()
+        } catch {
+            print("Torch could not be used: \(error)")
+        }
+    }
+    
     func capturePhotos(completion: @escaping ([UIImage]) -> Void) {
         guard let _ = session, !isCapturingPhoto else { return }
         isCapturingPhoto = true
@@ -94,30 +103,97 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         self.completion = completion
         
         let photoSettings = AVCapturePhotoSettings()
-        photoSettings.flashMode = isFlashOn ? .on : .off
+        photoSettings.flashMode = isFlashOn ? .off : .off
         
-        ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
-        wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
-
+        guard let wideAngleCamera = wideAngleCamera else { return }
+        do {
+            if wideAngleCamera.videoZoomFactor != 1.0 {
+                try wideAngleCamera.lockForConfiguration()
+                wideAngleCamera.videoZoomFactor = 1.0
+                wideAngleCamera.unlockForConfiguration()
+            }
+        } catch {
+            print("Error setting zoom factor: \(error)")
+        }
+        
+        if isFlashOn {
+            turnTorch(on: true)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.isBlackScreenVisible = true
+            
+            self.ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
+            self.wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
+        }
     }
     
     func captureZoomedPhotos() {
         guard let wideAngleCamera = wideAngleCamera else { return }
-            do {
-                try wideAngleCamera.lockForConfiguration()
-                wideAngleCamera.videoZoomFactor = 2.0 // Set the digital zoom factor
-                let zoomedPhotoSettings = AVCapturePhotoSettings()
-                zoomedPhotoSettings.flashMode = isFlashOn ? .on : .off
-                wideAngleOutput?.capturePhoto(with: zoomedPhotoSettings, delegate: self)
-                wideAngleCamera.unlockForConfiguration()
-            } catch {
-                print("Error setting zoom factor: \(error)")
+        do {
+            try wideAngleCamera.lockForConfiguration()
+            wideAngleCamera.videoZoomFactor = 2.0
+            let zoomedPhotoSettings = AVCapturePhotoSettings()
+            zoomedPhotoSettings.flashMode = isFlashOn ? .off : .off
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.wideAngleOutput?.capturePhoto(with: zoomedPhotoSettings, delegate: self)
             }
+            wideAngleCamera.unlockForConfiguration()
+        } catch {
+            print("Error setting zoom factor: \(error)")
+        }
+    }
+    
+    func setZoomLevel(zoomLevel: CGFloat) {
+        selectedZoomLevel = zoomLevel
+        if zoomLevel == 0.5 {
+            switchToUltraWideCamera()
+        } else {
+            switchToWideAngleCamera(zoomLevel: zoomLevel)
+        }
+    }
+    
+    private func switchToUltraWideCamera() {
+        guard let session = session, let ultraWideCamera = ultraWideCamera else { return }
+        session.beginConfiguration()
+        for input in session.inputs {
+            session.removeInput(input)
+        }
+        do {
+            let input = try AVCaptureDeviceInput(device: ultraWideCamera)
+            if session.canAddInput(input) {
+                session.addInput(input)
+            }
+            session.commitConfiguration()
+        } catch {
+            print("Error switching to ultra-wide camera: \(error)")
+        }
+    }
+    
+    private func switchToWideAngleCamera(zoomLevel: CGFloat) {
+        guard let session = session, let wideAngleCamera = wideAngleCamera else { return }
+        session.beginConfiguration()
+        for input in session.inputs {
+            session.removeInput(input)
+        }
+        do {
+            let input = try AVCaptureDeviceInput(device: wideAngleCamera)
+            if session.canAddInput(input) {
+                session.addInput(input)
+            }
+            wideAngleCamera.videoZoomFactor = zoomLevel
+            session.commitConfiguration()
+        } catch {
+            print("Error switching to wide-angle camera: \(error)")
+        }
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if let error = error {
             print("Error capturing photo: \(error)")
+            isBlackScreenVisible = false
+            if isFlashOn {
+                turnTorch(on: false)
+            }
             return
         }
         
@@ -132,34 +208,45 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
                 
                 if self.capturedImages.count == 2 {
                     print("captured 2 images")
-                    captureZoomedPhotos()
+                    self.captureZoomedPhotos()
                 }
                 
                 if self.capturedImages.count == 3 {
-                    backToNormalLens()
+                    self.backToNormalLens()
                     print("captured 3 images")
                     DispatchQueue.main.async {
                         self.completion?(self.capturedImages)
                         self.completion = nil
                         self.isCapturingPhoto = false
+                        if self.isFlashOn {
+                            self.turnTorch(on: false)
+                        }
                     }
                 }
             } else {
                 print("Photo library access not authorized")
-                // Handle the case where the user hasn't granted permission
+                self.isBlackScreenVisible = false
+                if self.isFlashOn {
+                    self.turnTorch(on: false)
+                }
             }
         }
     }
     
     func backToNormalLens() {
-        guard let wideAngleCamera = wideAngleCamera else { return }
-            do {
-                try wideAngleCamera.lockForConfiguration()
-                wideAngleCamera.videoZoomFactor = 1.0
-                wideAngleCamera.unlockForConfiguration()
-            } catch {
-                print("Error setting zoom factor: \(error)")
+        if selectedZoomLevel == 0.5 {
+            switchToUltraWideCamera()
+        } else {
+            switchToWideAngleCamera(zoomLevel: selectedZoomLevel)
+        }
+        
+        // Delay hiding the black screen and turning off the torch
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.isBlackScreenVisible = false
+            if self.isFlashOn {
+                self.turnTorch(on: false)
             }
+        }
     }
-    
 }
+

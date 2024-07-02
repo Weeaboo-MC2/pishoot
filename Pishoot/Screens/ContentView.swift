@@ -13,6 +13,8 @@ struct ContentView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var lastPhotos: [UIImage] = []
     @State var isAdditionalSettingsOpen: Bool = false
+    @State var isZoomOptionsVisible: Bool = false
+    @State var selectedZoomLevel: CGFloat = 1.0
 
     var body: some View {
         VStack {
@@ -24,14 +26,14 @@ struct ContentView: View {
             .padding(.horizontal)
             
             if let session = cameraViewModel.session {
-                CameraPreviewView(session: session)
+                CameraPreviewView(session: session, isBlackScreenVisible: $cameraViewModel.isBlackScreenVisible)
                     .edgesIgnoringSafeArea(.all)
                     .overlay(
                         VStack {
                             Spacer()
                             
                             if isAdditionalSettingsOpen {
-                                MainAdditionalSetting()
+                                MainAdditionalSetting(isZoomOptionsVisible: $isZoomOptionsVisible, selectedZoomLevel: $selectedZoomLevel, cameraViewModel: cameraViewModel)
                             }
                             
                             BottomBarView(lastPhoto: lastPhotos.first, captureAction: {
