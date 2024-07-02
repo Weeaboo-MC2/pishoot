@@ -4,7 +4,6 @@
 //
 //  Created by Muhammad Zikrurridho Afwani on 25/06/24.
 
-
 import SwiftUI
 import AVFoundation
 
@@ -82,6 +81,20 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         isFlashOn.toggle()
     }
     
+    private func turnTorch(on: Bool) {
+        guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
+        do {
+            try device.lockForConfiguration()
+            device.torchMode = on ? .on : .off
+            if on {
+                try device.setTorchModeOn(level: 1.0)
+            }
+            device.unlockForConfiguration()
+        } catch {
+            print("Torch could not be used: \(error)")
+        }
+    }
+    
     func capturePhotos(completion: @escaping ([UIImage]) -> Void) {
         guard let _ = session, !isCapturingPhoto else { return }
         isCapturingPhoto = true
@@ -89,12 +102,25 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         self.completion = completion
         
         let photoSettings = AVCapturePhotoSettings()
-        photoSettings.flashMode = isFlashOn ? .on : .off
+        photoSettings.flashMode = isFlashOn ? .off : .off
         
-        isBlackScreenVisible = true
+        if isFlashOn {
+            turnTorch(on: true)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.isBlackScreenVisible = true
+                
+                self.ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
+                self.wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
+            }
+        } else {
+            isBlackScreenVisible = true
+            
+            ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
+            wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
+        }
         
-        ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
-        wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
+        
     }
     
     func captureZoomedPhotos() {
@@ -103,7 +129,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
             try wideAngleCamera.lockForConfiguration()
             wideAngleCamera.videoZoomFactor = 2.0
             let zoomedPhotoSettings = AVCapturePhotoSettings()
-            zoomedPhotoSettings.flashMode = isFlashOn ? .on : .off
+            zoomedPhotoSettings.flashMode = isFlashOn ? .off : .off
             wideAngleOutput?.capturePhoto(with: zoomedPhotoSettings, delegate: self)
             wideAngleCamera.unlockForConfiguration()
         } catch {
@@ -115,6 +141,9 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         if let error = error {
             print("Error capturing photo: \(error)")
             isBlackScreenVisible = false
+            if isFlashOn {
+                turnTorch(on: false)
+            }
             return
         }
         
@@ -144,6 +173,9 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
             } else {
                 print("Photo library access not authorized")
                 self.isBlackScreenVisible = false
+                if self.isFlashOn {
+                    self.turnTorch(on: false)
+                }
             }
         }
     }
@@ -157,9 +189,13 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
             // Delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.isBlackScreenVisible = false
+                if self.isFlashOn {
+                    self.turnTorch(on: false)
+                }
             }
         } catch {
             print("Error setting zoom factor: \(error)")
         }
     }
 }
+
