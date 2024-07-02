@@ -292,130 +292,301 @@
 //    }
 //}
 
-//import SwiftUI
-//import AVFoundation
-//import Photos
-//
-//class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
-//    @Published var session: AVCaptureMultiCamSession?
-//    private var wideAngleOutput: AVCapturePhotoOutput?
-//    private var ultraWideOutput: AVCapturePhotoOutput?
-//    
-//    private var wideAngleCamera: AVCaptureDevice?
-//    private var ultraWideCamera: AVCaptureDevice?
-//    
-//    @Published var isFlashOn = false
-//    private var isCapturingPhoto = false
-//    private var capturedImages: [UIImage] = []
-//    private var completion: (([UIImage]) -> Void)?
-//    
-//    override init() {
-//        super.init()
-//        setupSession()
-//    }
-//    
-//    private func setupSession() {
-//        guard AVCaptureMultiCamSession.isMultiCamSupported else {
-//            print("Multi-cam not supported on this device")
-//            return
-//        }
-//        
-//        let session = AVCaptureMultiCamSession()
-//        self.session = session
-//        
-//        session.beginConfiguration()
-//        
-//        setupCamera(.builtInWideAngleCamera, to: session)
-//        setupCamera(.builtInUltraWideCamera, to: session)
-//        
-//        session.commitConfiguration()
-//    }
-//    
-//    private func setupCamera(_ deviceType: AVCaptureDevice.DeviceType, to session: AVCaptureMultiCamSession) {
-//        guard let device = AVCaptureDevice.default(deviceType, for: .video, position: .back) else { return }
-//        
-//        do {
-//            let input = try AVCaptureDeviceInput(device: device)
-//            if session.canAddInput(input) {
-//                session.addInputWithNoConnections(input)
-//            }
-//            
-//            let output = AVCapturePhotoOutput()
-//            if session.canAddOutput(output) {
-//                session.addOutputWithNoConnections(output)
-//            }
-//            
-//            let connection = AVCaptureConnection(inputPorts: input.ports, output: output)
-//            if session.canAddConnection(connection) {
-//                session.addConnection(connection)
-//            }
-//            
-//            if device.deviceType == .builtInWideAngleCamera {
-//                wideAngleOutput = output
-//                wideAngleCamera = device
-//            } else if device.deviceType == .builtInUltraWideCamera {
-//                ultraWideOutput = output
-//                ultraWideCamera = device
-//            }
-//        } catch {
-//            print("Error setting up camera: \(error)")
-//        }
-//    }
-//    
-//    func startSession() {
-//        session?.startRunning()
-//    }
-//    
-//    func stopSession() {
-//        session?.stopRunning()
-//    }
-//    
-//    func toggleFlash() {
-//        isFlashOn.toggle()
-//    }
-//    
-//    func capturePhotos(completion: @escaping ([UIImage]) -> Void) {
-//        guard let session = session, !isCapturingPhoto else { return }
-//        isCapturingPhoto = true
-//        capturedImages.removeAll()
-//        self.completion = completion
-//        
-//        let photoSettings = AVCapturePhotoSettings()
-//        photoSettings.flashMode = isFlashOn ? .on : .off
-//        
-//        wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
-//        ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
-//    }
-//    
-//    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-//        if let error = error {
-//            print("Error capturing photo: \(error)")
-//            return
-//        }
-//        
-//        guard let imageData = photo.fileDataRepresentation(),
-//              let image = UIImage(data: imageData) else { return }
-//        
-//        PhotoLibraryHelper.requestPhotoLibraryPermission { [weak self] authorized in
-//            guard let self = self else { return }
-//            if authorized {
-//                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-//                self.capturedImages.append(image)
-//                
-//                if self.capturedImages.count == 2 {
-//                    DispatchQueue.main.async {
-//                        self.completion?(self.capturedImages)
-//                        self.completion = nil
-//                        self.isCapturingPhoto = false
-//                    }
-//                }
-//            } else {
-//                print("Photo library access not authorized")
-//                // Handle the case where the user hasn't granted permission
-//            }
-//        }
-//    }
-//}
+import SwiftUI
+import AVFoundation
+import Photos
+
+class CameraViewModela: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
+    @Published var session: AVCaptureMultiCamSession?
+    private var wideAngleOutput: AVCapturePhotoOutput?
+    private var ultraWideOutput: AVCapturePhotoOutput?
+    private var telephotoOutput: AVCapturePhotoOutput?
+    
+    private var wideAngleCamera: AVCaptureDevice?
+    private var ultraWideCamera: AVCaptureDevice?
+    private var telephotoCamera: AVCaptureDevice?
+    
+    @Published var isFlashOn = false
+    private var isCapturingPhoto = false
+    private var capturedImages: [UIImage] = []
+    private var completion: (([UIImage]) -> Void)?
+    
+    override init() {
+        super.init()
+        setupSession()
+    }
+    
+    private func setupSession() {
+        guard AVCaptureMultiCamSession.isMultiCamSupported else {
+            print("Multi-cam not supported on this device")
+            return
+        }
+        
+        let session = AVCaptureMultiCamSession()
+        self.session = session
+        
+        session.beginConfiguration()
+        
+        setupCamera(.builtInWideAngleCamera, to: session)
+        setupCamera(.builtInUltraWideCamera, to: session)
+        setupCamera(.builtInTelephotoCamera, to: session)
+        
+        session.commitConfiguration()
+    }
+    
+    private func setupCamera(_ deviceType: AVCaptureDevice.DeviceType, to session: AVCaptureMultiCamSession) {
+        guard let device = AVCaptureDevice.default(deviceType, for: .video, position: .back) else { return }
+        
+        do {
+            let input = try AVCaptureDeviceInput(device: device)
+            if session.canAddInput(input) {
+                session.addInputWithNoConnections(input)
+            }
+            
+            let output = AVCapturePhotoOutput()
+            if session.canAddOutput(output) {
+                session.addOutputWithNoConnections(output)
+            }
+            
+            let connection = AVCaptureConnection(inputPorts: input.ports, output: output)
+            if session.canAddConnection(connection) {
+                session.addConnection(connection)
+            }
+            
+            switch device.deviceType {
+            case .builtInWideAngleCamera:
+                wideAngleOutput = output
+                wideAngleCamera = device
+            case .builtInUltraWideCamera:
+                ultraWideOutput = output
+                ultraWideCamera = device
+            case .builtInTelephotoCamera:
+                telephotoOutput = output
+                telephotoCamera = device
+            default:
+                break
+            }
+        } catch {
+            print("Error setting up camera: \(error)")
+        }
+    }
+    
+    func capturePhotos(completion: @escaping ([UIImage]) -> Void) {
+        guard let session = session, !isCapturingPhoto else { return }
+        isCapturingPhoto = true
+        capturedImages.removeAll()
+        self.completion = completion
+        
+        let photoSettings = AVCapturePhotoSettings()
+        photoSettings.flashMode = isFlashOn ? .on : .off
+        
+        wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
+        ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
+        
+        // Capture telephoto (2x zoom) image after a short delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            guard let self = self else { return }
+            
+            if let telephotoCamera = self.telephotoCamera {
+                do {
+                    try telephotoCamera.lockForConfiguration()
+                    telephotoCamera.videoZoomFactor = 2.0 // Set 2x zoom
+                    telephotoCamera.unlockForConfiguration()
+                } catch {
+                    print("Error setting zoom: \(error)")
+                }
+            }
+            
+            self.telephotoOutput?.capturePhoto(with: photoSettings, delegate: self)
+        }
+    }
+    
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        if let error = error {
+            print("Error capturing photo: \(error)")
+            return
+        }
+        
+        guard let imageData = photo.fileDataRepresentation(),
+              let image = UIImage(data: imageData) else { return }
+        
+        PhotoLibraryHelper.requestPhotoLibraryPermission { [weak self] authorized in
+            guard let self = self else { return }
+            if authorized {
+                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                self.capturedImages.append(image)
+                
+                if self.capturedImages.count == 3 {
+                    DispatchQueue.main.async {
+                        self.completion?(self.capturedImages)
+                        self.completion = nil
+                        self.isCapturingPhoto = false
+                    }
+                }
+            } else {
+                print("Photo library access not authorized")
+                // Handle the case where the user hasn't granted permission
+            }
+        }
+    }
+    
+    // ... (other methods remain the same)
+}
+
+import SwiftUI
+import AVFoundation
+import Photos
+
+class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
+    @Published var session: AVCaptureMultiCamSession?
+    private var wideAngleOutput: AVCapturePhotoOutput?
+    private var ultraWideOutput: AVCapturePhotoOutput?
+    
+    private var wideAngleCamera: AVCaptureDevice?
+    private var ultraWideCamera: AVCaptureDevice?
+    
+    @Published var isFlashOn = false
+    private var isCapturingPhoto = false
+    private var capturedImages: [UIImage] = []
+    private var completion: (([UIImage]) -> Void)?
+    
+    override init() {
+        super.init()
+        setupSession()
+    }
+    
+    private func setupSession() {
+        guard AVCaptureMultiCamSession.isMultiCamSupported else {
+            print("Multi-cam not supported on this device")
+            return
+        }
+        
+        let session = AVCaptureMultiCamSession()
+        self.session = session
+        
+        session.beginConfiguration()
+        
+        setupCamera(.builtInWideAngleCamera, to: session)
+        setupCamera(.builtInUltraWideCamera, to: session)
+        session.commitConfiguration()
+    }
+
+    
+    private func setupCamera(_ deviceType: AVCaptureDevice.DeviceType, to session: AVCaptureMultiCamSession) {
+        guard let device = AVCaptureDevice.default(deviceType, for: .video, position: .back) else { return }
+        
+        do {
+            let input = try AVCaptureDeviceInput(device: device)
+            if session.canAddInput(input) {
+                session.addInputWithNoConnections(input)
+            }
+            
+            let output = AVCapturePhotoOutput()
+            if session.canAddOutput(output) {
+                session.addOutputWithNoConnections(output)
+            }
+            
+            let connection = AVCaptureConnection(inputPorts: input.ports, output: output)
+            if session.canAddConnection(connection) {
+                session.addConnection(connection)
+            }
+            
+            if device.deviceType == .builtInWideAngleCamera {
+                wideAngleOutput = output
+                wideAngleCamera = device
+            } else if device.deviceType == .builtInUltraWideCamera {
+                ultraWideOutput = output
+                ultraWideCamera = device
+            }
+        } catch {
+            print("Error setting up camera: \(error)")
+        }
+    }
+    
+    func startSession() {
+        session?.startRunning()
+    }
+    
+    func stopSession() {
+        session?.stopRunning()
+    }
+    
+    func toggleFlash() {
+        isFlashOn.toggle()
+    }
+    
+    func capturePhotos(completion: @escaping ([UIImage]) -> Void) {
+        guard let _ = session, !isCapturingPhoto else { return }
+        isCapturingPhoto = true
+        capturedImages.removeAll()
+        self.completion = completion
+        
+        let photoSettings = AVCapturePhotoSettings()
+        photoSettings.flashMode = isFlashOn ? .on : .off
+        
+        ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
+        wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
+
+    }
+    
+    func captureZoomedPhotos() {
+        guard let wideAngleCamera = wideAngleCamera else { return }
+            do {
+                try wideAngleCamera.lockForConfiguration()
+                wideAngleCamera.videoZoomFactor = 2.0 // Set the digital zoom factor
+                let zoomedPhotoSettings = AVCapturePhotoSettings()
+                zoomedPhotoSettings.flashMode = isFlashOn ? .on : .off
+                wideAngleOutput?.capturePhoto(with: zoomedPhotoSettings, delegate: self)
+                wideAngleCamera.unlockForConfiguration()
+            } catch {
+                print("Error setting zoom factor: \(error)")
+            }
+    }
+    
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        if let error = error {
+            print("Error capturing photo: \(error)")
+            return
+        }
+        
+        guard let imageData = photo.fileDataRepresentation(),
+              let image = UIImage(data: imageData) else { return }
+        
+        PhotoLibraryHelper.requestPhotoLibraryPermission { [weak self] authorized in
+            guard let self = self else { return }
+            if authorized {
+                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                self.capturedImages.append(image)
+                
+                if self.capturedImages.count == 2 {
+                    print("captured 2 images")
+                    captureZoomedPhotos()
+                }
+                
+                if self.capturedImages.count == 3 {
+                    guard let wideAngleCamera = wideAngleCamera else { return }
+                        do {
+                            try wideAngleCamera.lockForConfiguration()
+                            wideAngleCamera.videoZoomFactor = 1.0 // Set the digital zoom factor
+                            wideAngleCamera.unlockForConfiguration()
+                        } catch {
+                            print("Error setting zoom factor: \(error)")
+                        }
+                    print("captured 3 images")
+                    DispatchQueue.main.async {
+                        self.completion?(self.capturedImages)
+                        self.completion = nil
+                        self.isCapturingPhoto = false
+                    }
+                }
+            } else {
+                print("Photo library access not authorized")
+                // Handle the case where the user hasn't granted permission
+            }
+        }
+    }
+    
+}
 
 //import SwiftUI
 //import AVFoundation
@@ -572,156 +743,158 @@
 //    }
 //}
 
-import SwiftUI
-import AVFoundation
-import Photos
-
-class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
-    @Published var session: AVCaptureMultiCamSession?
-    private var wideAngleOutput: AVCapturePhotoOutput?
-    private var ultraWideOutput: AVCapturePhotoOutput?
-    private var telephotoOutput: AVCapturePhotoOutput?
-
-    private var wideAngleCamera: AVCaptureDevice?
-    private var ultraWideCamera: AVCaptureDevice?
-    private var telephotoCamera: AVCaptureDevice?
-
-    @Published var isFlashOn = false
-    private var isCapturingPhoto = false
-    private var capturedImages: [UIImage] = []
-    private var completion: (([UIImage]) -> Void)?
-
-    override init() {
-        super.init()
-        setupSession()
-    }
-
-    private func setupSession() {
-        guard AVCaptureMultiCamSession.isMultiCamSupported else {
-            print("Multi-cam not supported on this device")
-            return
-        }
-
-        let session = AVCaptureMultiCamSession()
-        self.session = session
-
-        session.beginConfiguration()
-
-        setupCamera(.builtInWideAngleCamera, to: session)
-        setupCamera(.builtInUltraWideCamera, to: session)
-        setupCamera(.builtInTelephotoCamera, to: session)
-
-        session.commitConfiguration()
-    }
-
-    private func setupCamera(_ deviceType: AVCaptureDevice.DeviceType, to session: AVCaptureMultiCamSession) {
-        guard let device = AVCaptureDevice.default(deviceType, for: .video, position: .back) else { return }
-
-        do {
-            let input = try AVCaptureDeviceInput(device: device)
-            if session.canAddInput(input) {
-                session.addInputWithNoConnections(input)
-            }
-
-            let output = AVCapturePhotoOutput()
-            if session.canAddOutput(output) {
-                session.addOutputWithNoConnections(output)
-            }
-
-            let connection = AVCaptureConnection(inputPorts: input.ports, output: output)
-            if session.canAddConnection(connection) {
-                session.addConnection(connection)
-            }
-
-            if device.deviceType == .builtInWideAngleCamera {
-                wideAngleOutput = output
-                wideAngleCamera = device
-            } else if device.deviceType == .builtInUltraWideCamera {
-                ultraWideOutput = output
-                ultraWideCamera = device
-            } else if device.deviceType == .builtInTelephotoCamera {
-                telephotoOutput = output
-                telephotoCamera = device
-            }
-        } catch {
-            print("Error setting up camera: \(error)")
-        }
-    }
-
-    func startSession() {
-        session?.startRunning()
-    }
-
-    func stopSession() {
-        session?.stopRunning()
-    }
-
-    func toggleFlash() {
-        isFlashOn.toggle()
-    }
-
-    func capturePhotos(completion: @escaping ([UIImage]) -> Void) {
-        guard let session = session, !isCapturingPhoto else { return }
-        isCapturingPhoto = true
-        capturedImages.removeAll()
-        self.completion = completion
-
-        capturePhoto(from: wideAngleOutput, zoomFactor: 1.0)
-        capturePhoto(from: ultraWideOutput)
-        if let telephotoOutput = telephotoOutput {
-            capturePhoto(from: telephotoOutput)
-        } else {
-            capturePhoto(from: wideAngleOutput, zoomFactor: 2.0)
-        }
-    }
-
-    private func capturePhoto(from output: AVCapturePhotoOutput?, zoomFactor: CGFloat = 1.0) {
-        guard let output = output else { return }
-        let photoSettings = AVCapturePhotoSettings()
-        photoSettings.flashMode = isFlashOn ? .on : .off
-        
-        if let deviceInput = output.connections.first?.inputPorts.first?.input as? AVCaptureDeviceInput {
-            do {
-                try deviceInput.device.lockForConfiguration()
-                deviceInput.device.videoZoomFactor = zoomFactor
-                print("take photo with zoom factor: \(zoomFactor)")
-                output.capturePhoto(with: photoSettings, delegate: self)
-                deviceInput.device.videoZoomFactor = 1.0 // Reset zoom factor to 1x after capture
-                deviceInput.device.unlockForConfiguration()
-            } catch {
-                print("Error setting zoom factor: \(error)")
-            }
-        } else {
-            output.capturePhoto(with: photoSettings, delegate: self)
-        }
-    }
-
-    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        if let error = error {
-            print("Error capturing photo: \(error)")
-            return
-        }
-
-        guard let imageData = photo.fileDataRepresentation(),
-              let image = UIImage(data: imageData) else { return }
-
-        PhotoLibraryHelper.requestPhotoLibraryPermission { [weak self] authorized in
-            guard let self = self else { return }
-            if authorized {
-                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                self.capturedImages.append(image)
-
-                if self.capturedImages.count == 3 {
-                    DispatchQueue.main.async {
-                        self.completion?(self.capturedImages)
-                        self.completion = nil
-                        self.isCapturingPhoto = false
-                    }
-                }
-            } else {
-                print("Photo library access not authorized")
-                // Handle the case where the user hasn't granted permission
-            }
-        }
-    }
-}
+//import SwiftUI
+//import AVFoundation
+//import Photos
+//
+//class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
+//    @Published var session: AVCaptureSession?
+//    
+//    private var photoOutput: AVCapturePhotoOutput?
+//    private var wideAngleCamera: AVCaptureDevice?
+//    private var ultraWideCamera: AVCaptureDevice?
+//
+//    @Published var isFlashOn = false
+//    private var isCapturingPhoto = false
+//    private var capturedImages: [UIImage] = []
+//    private var completion: (([UIImage]) -> Void)?
+//    private var currentCaptureIndex = 0
+//    private let zoomFactors: [CGFloat] = [0.5, 1.0, 2.0]
+//
+//    override init() {
+//        super.init()
+//        setupSession()
+//    }
+//
+//    private func setupSession() {
+//        let session = AVCaptureSession()
+//        self.session = session
+//
+//        session.beginConfiguration()
+//
+//        guard let wideAngleCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
+//              let ultraWideCamera = AVCaptureDevice.default(.builtInUltraWideCamera, for: .video, position: .back) else {
+//            print("Failed to get camera devices")
+//            return
+//        }
+//
+//        self.wideAngleCamera = wideAngleCamera
+//        self.ultraWideCamera = ultraWideCamera
+//
+//        do {
+//            let wideAngleInput = try AVCaptureDeviceInput(device: wideAngleCamera)
+//            if session.canAddInput(wideAngleInput) {
+//                session.addInput(wideAngleInput)
+//            }
+//
+//            let photoOutput = AVCapturePhotoOutput()
+//            if session.canAddOutput(photoOutput) {
+//                session.addOutput(photoOutput)
+//                self.photoOutput = photoOutput
+//            }
+//        } catch {
+//            print("Error setting up camera: \(error)")
+//        }
+//
+//        session.commitConfiguration()
+//    }
+//
+//    func startSession() {
+//        DispatchQueue.global(qos: .background).async {
+//            self.session?.startRunning()
+//        }
+//    }
+//
+//    func stopSession(completion: @escaping () -> Void) {
+//        DispatchQueue.global(qos: .background).async {
+//            self.session?.stopRunning()
+//            DispatchQueue.main.async {
+//                completion()
+//            }
+//        }
+//    }
+//
+//    func toggleFlash() {
+//        isFlashOn.toggle()
+//    }
+//
+//    func capturePhotos(completion: @escaping ([UIImage]) -> Void) {
+//        guard let session = session, session.isRunning, !isCapturingPhoto else { return }
+//        isCapturingPhoto = true
+//        capturedImages.removeAll()
+//        self.completion = completion
+//        currentCaptureIndex = 0
+//        captureNextPhoto()
+//    }
+//
+//    private func captureNextPhoto() {
+//        guard currentCaptureIndex < zoomFactors.count else {
+//            isCapturingPhoto = false
+//            self.completion?(capturedImages)
+//            return
+//        }
+//
+//        let zoomFactor = zoomFactors[currentCaptureIndex]
+//        capturePhoto(zoomFactor: zoomFactor) {
+//            self.currentCaptureIndex += 1
+//            self.captureNextPhoto()
+//        }
+//    }
+//
+//    private func capturePhoto(zoomFactor: CGFloat, completion: @escaping () -> Void) {
+//        guard let photoOutput = self.photoOutput else { return }
+//
+//        let photoSettings = AVCapturePhotoSettings()
+//        photoSettings.flashMode = isFlashOn ? .on : .off
+//
+//        if let device = (zoomFactor < 1.0) ? ultraWideCamera : wideAngleCamera {
+//            do {
+//                try device.lockForConfiguration()
+//                device.videoZoomFactor = (zoomFactor < 1.0) ? 1.0 : zoomFactor
+//                device.unlockForConfiguration()
+//
+//                if let connection = photoOutput.connection(with: .video) {
+//                    connection.videoOrientation = .portrait
+//                }
+//
+//                photoOutput.capturePhoto(with: photoSettings, delegate: self)
+//            } catch {
+//                print("Error setting zoom factor: \(error)")
+//            }
+//        }
+//
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//            completion()
+//        }
+//    }
+//
+//    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+//        if let error = error {
+//            print("Error capturing photo: \(error)")
+//            return
+//        }
+//
+//        guard let imageData = photo.fileDataRepresentation(),
+//              let image = UIImage(data: imageData) else { return }
+//
+//        self.capturedImages.append(image)
+//
+//        if self.capturedImages.count == zoomFactors.count {
+//            PhotoLibraryHelper.requestPhotoLibraryPermission { [weak self] authorized in
+//                guard let self = self else { return }
+//                if authorized {
+//                    for image in self.capturedImages {
+//                        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+//                    }
+//                } else {
+//                    print("Photo library access not authorized")
+//                }
+//                DispatchQueue.main.async {
+//                    self.completion?(self.capturedImages)
+//                    self.completion = nil
+//                    self.isCapturingPhoto = false
+//                }
+//            }
+//        }
+//    }
+//}
