@@ -24,7 +24,7 @@ struct ContentView: View {
             .padding(.horizontal)
             
             if let session = cameraViewModel.session {
-                CameraPreviewView(session: session)
+                CameraPreviewView(session: session, isBlackScreenVisible: $cameraViewModel.isBlackScreenVisible)
                     .edgesIgnoringSafeArea(.all)
                     .overlay(
                         VStack {
@@ -67,6 +67,9 @@ struct ContentView: View {
         isAdditionalSettingsOpen.toggle()
     }
 }
+
+
+
 
 #Preview {
     ContentView()

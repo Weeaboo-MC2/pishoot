@@ -8,15 +8,19 @@
 import SwiftUI
 import AVFoundation
 
-
 struct CameraPreviewView: UIViewRepresentable {
     class CameraPreview: UIView {
         var previewLayer: AVCaptureVideoPreviewLayer
+        var blackScreenView: UIView
         
         override init(frame: CGRect) {
             previewLayer = AVCaptureVideoPreviewLayer()
+            blackScreenView = UIView()
+            blackScreenView.backgroundColor = .black
+            blackScreenView.alpha = 0
             super.init(frame: frame)
             layer.addSublayer(previewLayer)
+            addSubview(blackScreenView)
         }
         
         required init?(coder: NSCoder) {
@@ -26,16 +30,18 @@ struct CameraPreviewView: UIViewRepresentable {
         override func layoutSubviews() {
             super.layoutSubviews()
             previewLayer.frame = bounds
+            blackScreenView.frame = bounds
         }
     }
     
     var session: AVCaptureSession
+    @Binding var isBlackScreenVisible: Bool
     
     func makeUIView(context: Context) -> CameraPreview {
         let view = CameraPreview()
         view.previewLayer.session = session
         view.previewLayer.videoGravity = .resizeAspectFill
-
+        
         if let wideAngleInput = session.inputs.first(where: { ($0 as? AVCaptureDeviceInput)?.device.deviceType == .builtInWideAngleCamera }) as? AVCaptureDeviceInput,
            let port = wideAngleInput.ports.first(where: { $0.mediaType == .video }) {
             let connection = AVCaptureConnection(inputPort: port, videoPreviewLayer: view.previewLayer)
@@ -51,9 +57,11 @@ struct CameraPreviewView: UIViewRepresentable {
                 print("Error setting initial zoom factor: \(error)")
             }
         }
-
+        
         return view
     }
     
-    func updateUIView(_ uiView: CameraPreview, context: Context) {}
+    func updateUIView(_ uiView: CameraPreview, context: Context) {
+        uiView.blackScreenView.alpha = isBlackScreenVisible ? 1 : 0
+    }
 }

@@ -7,20 +7,18 @@
 
 import SwiftUI
 import AVFoundation
-import Photos
 
 class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
     @Published var session: AVCaptureMultiCamSession?
     private var wideAngleOutput: AVCapturePhotoOutput?
     private var ultraWideOutput: AVCapturePhotoOutput?
-    
     private var wideAngleCamera: AVCaptureDevice?
     private var ultraWideCamera: AVCaptureDevice?
-    
     @Published var isFlashOn = false
     private var isCapturingPhoto = false
     private var capturedImages: [UIImage] = []
     private var completion: (([UIImage]) -> Void)?
+    @Published var isBlackScreenVisible = false
     
     override init() {
         super.init()
@@ -35,14 +33,11 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         
         let session = AVCaptureMultiCamSession()
         self.session = session
-        
         session.beginConfiguration()
-        
         setupCamera(.builtInWideAngleCamera, to: session)
         setupCamera(.builtInUltraWideCamera, to: session)
         session.commitConfiguration()
     }
-
     
     private func setupCamera(_ deviceType: AVCaptureDevice.DeviceType, to session: AVCaptureMultiCamSession) {
         guard let device = AVCaptureDevice.default(deviceType, for: .video, position: .back) else { return }
@@ -96,28 +91,30 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         let photoSettings = AVCapturePhotoSettings()
         photoSettings.flashMode = isFlashOn ? .on : .off
         
+        isBlackScreenVisible = true
+        
         ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
         wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
-
     }
     
     func captureZoomedPhotos() {
         guard let wideAngleCamera = wideAngleCamera else { return }
-            do {
-                try wideAngleCamera.lockForConfiguration()
-                wideAngleCamera.videoZoomFactor = 2.0 // Set the digital zoom factor
-                let zoomedPhotoSettings = AVCapturePhotoSettings()
-                zoomedPhotoSettings.flashMode = isFlashOn ? .on : .off
-                wideAngleOutput?.capturePhoto(with: zoomedPhotoSettings, delegate: self)
-                wideAngleCamera.unlockForConfiguration()
-            } catch {
-                print("Error setting zoom factor: \(error)")
-            }
+        do {
+            try wideAngleCamera.lockForConfiguration()
+            wideAngleCamera.videoZoomFactor = 2.0
+            let zoomedPhotoSettings = AVCapturePhotoSettings()
+            zoomedPhotoSettings.flashMode = isFlashOn ? .on : .off
+            wideAngleOutput?.capturePhoto(with: zoomedPhotoSettings, delegate: self)
+            wideAngleCamera.unlockForConfiguration()
+        } catch {
+            print("Error setting zoom factor: \(error)")
+        }
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if let error = error {
             print("Error capturing photo: \(error)")
+            isBlackScreenVisible = false
             return
         }
         
@@ -132,11 +129,11 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
                 
                 if self.capturedImages.count == 2 {
                     print("captured 2 images")
-                    captureZoomedPhotos()
+                    self.captureZoomedPhotos()
                 }
                 
                 if self.capturedImages.count == 3 {
-                    backToNormalLens()
+                    self.backToNormalLens()
                     print("captured 3 images")
                     DispatchQueue.main.async {
                         self.completion?(self.capturedImages)
@@ -146,20 +143,23 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
                 }
             } else {
                 print("Photo library access not authorized")
-                // Handle the case where the user hasn't granted permission
+                self.isBlackScreenVisible = false
             }
         }
     }
     
     func backToNormalLens() {
         guard let wideAngleCamera = wideAngleCamera else { return }
-            do {
-                try wideAngleCamera.lockForConfiguration()
-                wideAngleCamera.videoZoomFactor = 1.0
-                wideAngleCamera.unlockForConfiguration()
-            } catch {
-                print("Error setting zoom factor: \(error)")
+        do {
+            try wideAngleCamera.lockForConfiguration()
+            wideAngleCamera.videoZoomFactor = 1.0
+            wideAngleCamera.unlockForConfiguration()
+            // Delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.isBlackScreenVisible = false
             }
+        } catch {
+            print("Error setting zoom factor: \(error)")
+        }
     }
-    
 }
