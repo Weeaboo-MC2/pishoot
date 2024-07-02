@@ -9,17 +9,21 @@ import SwiftUI
 
 struct TopBarView: View {
     var toggleFlash: () -> Void
+    var toggleAdditionalSettings: () -> Void
     var isFlashOn: Bool
+    var isAdditionalSettingsOpen: Bool
     
     var body: some View {
         ZStack {
             HStack {
                 Button(action: {
-                    toggleFlash()
+                    withAnimation {
+                        toggleFlash()
+                    }
                 }) {
                     Image(systemName: isFlashOn ? "bolt.fill" : "bolt.slash.fill")
                         .foregroundColor(.white)
-                        .padding()
+                        .padding(10)
                         .background(Color.black.opacity(0.5))
                         .clipShape(Circle())
                 }
@@ -28,21 +32,22 @@ struct TopBarView: View {
             }
             
             Button(action: {
-                // Arrow action (next)
+                withAnimation() {
+                    toggleAdditionalSettings()
+                }
             }) {
-                Image(systemName: "chevron.up")
+                Image(systemName: isAdditionalSettingsOpen ? "chevron.down" : "chevron.up")
                     .foregroundColor(.white)
-                    .padding()
-                    .background(Color.black.opacity(0.5))
+                    .padding(10)
+                    .background(Color.gray.opacity(0.5))
                     .clipShape(Circle())
             }
         }
-        .padding(.horizontal)
-        .padding(.top, 40)
+        .padding()
     }
 }
 
 
 #Preview {
-    TopBarView(toggleFlash: {}, isFlashOn: false)
+    TopBarView(toggleFlash: {}, toggleAdditionalSettings: {}, isFlashOn: false, isAdditionalSettingsOpen: false)
 }

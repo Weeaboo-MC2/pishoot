@@ -5,43 +5,66 @@
 //  Created by Muhammad Zikrurridho Afwani on 25/06/24.
 //
 
+
 import SwiftUI
+import AVFoundation
 
 struct ContentView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
-    @State private var lastPhoto: UIImage? = nil
+    @State private var lastPhotos: [UIImage] = []
+    @State var isAdditionalSettingsOpen: Bool = false
 
     var body: some View {
-        ZStack {
-            CameraPreviewView(session: cameraViewModel.session)
-                .edgesIgnoringSafeArea(.all)
-                .overlay(
-                    VStack {
-                        TopBarView(toggleFlash: {
-                            cameraViewModel.toggleFlash()
-                        }, isFlashOn: cameraViewModel.isFlashOn)
-                        
-                        Spacer()
-                        
-                        BottomBarView(lastPhoto: lastPhoto, captureAction: {
-                            cameraViewModel.capturePhotos { image in
-                                self.lastPhoto = image
+        VStack {
+            TopBarView(toggleFlash: {
+                cameraViewModel.toggleFlash()
+            }, toggleAdditionalSettings: toggleAdditionalSettings, isFlashOn: cameraViewModel.isFlashOn,
+                       isAdditionalSettingsOpen: isAdditionalSettingsOpen)
+            .padding(.top, 40)
+            .padding(.horizontal)
+            
+            if let session = cameraViewModel.session {
+                CameraPreviewView(session: session)
+                    .edgesIgnoringSafeArea(.all)
+                    .overlay(
+                        VStack {
+                            Spacer()
+                            
+                            if isAdditionalSettingsOpen {
+                                MainAdditionalSetting()
                             }
-                        }, openPhotosApp: {
-                            PhotoLibraryHelper.openPhotosApp()
-                        })
-                    }
-                )
+                            
+                            BottomBarView(lastPhoto: lastPhotos.first, captureAction: {
+                                cameraViewModel.capturePhotos { images in
+                                    self.lastPhotos = images
+                                }
+                            }, openPhotosApp: {
+                                PhotoLibraryHelper.openPhotosApp()
+                            })
+                            .padding(.bottom, 20)
+                        }
+                    )
+            } else {
+                Text("Camera not available")
+            }
         }
         .onAppear {
             cameraViewModel.startSession()
             PhotoLibraryHelper.fetchLastPhoto { image in
-                self.lastPhoto = image
+                if let image = image {
+                    self.lastPhotos = [image]
+                }
             }
         }
         .onDisappear {
             cameraViewModel.stopSession()
         }
+        .statusBar(hidden: true)
+        .ignoresSafeArea()
+    }
+    
+    func toggleAdditionalSettings() {
+        isAdditionalSettingsOpen.toggle()
     }
 }
 

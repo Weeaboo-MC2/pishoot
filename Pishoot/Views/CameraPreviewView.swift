@@ -8,6 +8,7 @@
 import SwiftUI
 import AVFoundation
 
+
 struct CameraPreviewView: UIViewRepresentable {
     class CameraPreview: UIView {
         var previewLayer: AVCaptureVideoPreviewLayer
@@ -34,6 +35,23 @@ struct CameraPreviewView: UIViewRepresentable {
         let view = CameraPreview()
         view.previewLayer.session = session
         view.previewLayer.videoGravity = .resizeAspectFill
+
+        if let wideAngleInput = session.inputs.first(where: { ($0 as? AVCaptureDeviceInput)?.device.deviceType == .builtInWideAngleCamera }) as? AVCaptureDeviceInput,
+           let port = wideAngleInput.ports.first(where: { $0.mediaType == .video }) {
+            let connection = AVCaptureConnection(inputPort: port, videoPreviewLayer: view.previewLayer)
+            if session.canAddConnection(connection) {
+                session.addConnection(connection)
+            }
+            
+            do {
+                try wideAngleInput.device.lockForConfiguration()
+                wideAngleInput.device.videoZoomFactor = 1.0
+                wideAngleInput.device.unlockForConfiguration()
+            } catch {
+                print("Error setting initial zoom factor: \(error)")
+            }
+        }
+
         return view
     }
     

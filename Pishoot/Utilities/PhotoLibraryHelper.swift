@@ -9,6 +9,14 @@ import UIKit
 import Photos
 
 struct PhotoLibraryHelper {
+    static func requestPhotoLibraryPermission(completion: @escaping (Bool) -> Void) {
+        PHPhotoLibrary.requestAuthorization { status in
+            DispatchQueue.main.async {
+                completion(status == .authorized)
+            }
+        }
+    }
+
     static func openPhotosApp() {
         if let url = URL(string: "photos-redirect://") {
             if UIApplication.shared.canOpenURL(url) {
@@ -18,8 +26,8 @@ struct PhotoLibraryHelper {
     }
     
     static func fetchLastPhoto(completion: @escaping (UIImage?) -> Void) {
-        PHPhotoLibrary.requestAuthorization { status in
-            if status == .authorized {
+        requestPhotoLibraryPermission { authorized in
+            if authorized {
                 let fetchOptions = PHFetchOptions()
                 fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
                 fetchOptions.fetchLimit = 1

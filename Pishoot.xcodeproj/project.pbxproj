@@ -18,6 +18,7 @@
 		0F8458ED2C2AB9C20033FED7 /* TopBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458EC2C2AB9C20033FED7 /* TopBarView.swift */; };
 		0F8458EF2C2ABA2C0033FED7 /* BottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458EE2C2ABA2C0033FED7 /* BottomBarView.swift */; };
 		0F8458F12C2ABA8C0033FED7 /* PhotoThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458F02C2ABA8C0033FED7 /* PhotoThumbnailView.swift */; };
+		0F8458F52C2BB7AB0033FED7 /* MainAdditionalSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458F42C2BB7AB0033FED7 /* MainAdditionalSetting.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		0F8458EC2C2AB9C20033FED7 /* TopBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBarView.swift; sourceTree = "<group>"; };
 		0F8458EE2C2ABA2C0033FED7 /* BottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarView.swift; sourceTree = "<group>"; };
 		0F8458F02C2ABA8C0033FED7 /* PhotoThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoThumbnailView.swift; sourceTree = "<group>"; };
+		0F8458F42C2BB7AB0033FED7 /* MainAdditionalSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAdditionalSetting.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +94,7 @@
 				0F8458EC2C2AB9C20033FED7 /* TopBarView.swift */,
 				0F8458EE2C2ABA2C0033FED7 /* BottomBarView.swift */,
 				0F8458F02C2ABA8C0033FED7 /* PhotoThumbnailView.swift */,
+				0F8458F42C2BB7AB0033FED7 /* MainAdditionalSetting.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -192,6 +195,7 @@
 			files = (
 				0F8458D52C2AB4130033FED7 /* ContentView.swift in Sources */,
 				0F8458D32C2AB4130033FED7 /* PishootApp.swift in Sources */,
+				0F8458F52C2BB7AB0033FED7 /* MainAdditionalSetting.swift in Sources */,
 				0F8458E92C2AB9170033FED7 /* CameraPreviewView.swift in Sources */,
 				0F8458EF2C2ABA2C0033FED7 /* BottomBarView.swift in Sources */,
 				0F8458E72C2AB8CD0033FED7 /* PhotoLibraryHelper.swift in Sources */,
@@ -335,9 +339,9 @@
 				DEVELOPMENT_TEAM = VFLSGXGQ55;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to allow you to take photos.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to save photos";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to allow you to upload photos";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -367,9 +371,9 @@
 				DEVELOPMENT_TEAM = VFLSGXGQ55;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to allow you to take photos.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to save photos";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to allow you to upload photos";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
