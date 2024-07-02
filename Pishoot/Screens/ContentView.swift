@@ -13,6 +13,8 @@ struct ContentView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var lastPhotos: [UIImage] = []
     @State var isAdditionalSettingsOpen: Bool = false
+    @State var isZoomOptionsVisible: Bool = false
+    @State var selectedZoomLevel: CGFloat = 1.0
 
     var body: some View {
         VStack {
@@ -31,7 +33,7 @@ struct ContentView: View {
                             Spacer()
                             
                             if isAdditionalSettingsOpen {
-                                MainAdditionalSetting()
+                                MainAdditionalSetting(isZoomOptionsVisible: $isZoomOptionsVisible, selectedZoomLevel: $selectedZoomLevel, cameraViewModel: cameraViewModel)
                             }
                             
                             BottomBarView(lastPhoto: lastPhotos.first, captureAction: {
@@ -67,9 +69,6 @@ struct ContentView: View {
         isAdditionalSettingsOpen.toggle()
     }
 }
-
-
-
 
 #Preview {
     ContentView()
