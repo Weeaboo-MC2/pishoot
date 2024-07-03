@@ -14,10 +14,11 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     private var wideAngleCamera: AVCaptureDevice?
     private var ultraWideCamera: AVCaptureDevice?
     @Published var isFlashOn = false
-    private var isCapturingPhoto = false
+    @Published var isCapturingPhoto = false
     private var capturedImages: [UIImage] = []
     private var completion: (([UIImage]) -> Void)?
     @Published var isBlackScreenVisible = false
+    @Published var captureProgress: CGFloat = 0
     @Published var selectedZoomLevel: CGFloat = 1.0
     @Published var isAdditionalSettingsOpen: Bool = false
     @Published var timerDuration: Int = 0
@@ -153,6 +154,10 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.isBlackScreenVisible = true
+            self.captureProgress = 0
+            withAnimation(.linear(duration: 1)) {
+                self.captureProgress = 1
+            }
             self.ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
             self.wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
         }
