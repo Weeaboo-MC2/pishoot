@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F05D7012C35985400F961C7 /* BlackScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F05D7002C35985400F961C7 /* BlackScreenView.swift */; };
 		0F8458D32C2AB4130033FED7 /* PishootApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458D22C2AB4130033FED7 /* PishootApp.swift */; };
 		0F8458D52C2AB4130033FED7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458D42C2AB4130033FED7 /* ContentView.swift */; };
 		0F8458D72C2AB4140033FED7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F8458D62C2AB4140033FED7 /* Assets.xcassets */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F05D7002C35985400F961C7 /* BlackScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackScreenView.swift; sourceTree = "<group>"; };
 		0F8458CF2C2AB4130033FED7 /* Pishoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pishoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F8458D22C2AB4130033FED7 /* PishootApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PishootApp.swift; sourceTree = "<group>"; };
 		0F8458D42C2AB4130033FED7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 				0F8458EE2C2ABA2C0033FED7 /* BottomBarView.swift */,
 				0F8458F02C2ABA8C0033FED7 /* PhotoThumbnailView.swift */,
 				0F8458F42C2BB7AB0033FED7 /* MainAdditionalSetting.swift */,
+				0F05D7002C35985400F961C7 /* BlackScreenView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -201,6 +204,7 @@
 				0F8458E72C2AB8CD0033FED7 /* PhotoLibraryHelper.swift in Sources */,
 				0F8458ED2C2AB9C20033FED7 /* TopBarView.swift in Sources */,
 				0F8458F12C2ABA8C0033FED7 /* PhotoThumbnailView.swift in Sources */,
+				0F05D7012C35985400F961C7 /* BlackScreenView.swift in Sources */,
 				0F8458EB2C2AB97E0033FED7 /* CaptureButton.swift in Sources */,
 				0F8458E52C2AB8800033FED7 /* CameraViewModel.swift in Sources */,
 			);

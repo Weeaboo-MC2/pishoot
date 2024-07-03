@@ -11,6 +11,7 @@ struct BottomBarView: View {
     var lastPhoto: UIImage?
     var captureAction: () -> Void
     var openPhotosApp: () -> Void
+    @Binding var isCapturing: Bool
 
     var body: some View {
         ZStack {
@@ -23,7 +24,7 @@ struct BottomBarView: View {
             
             HStack {
                 Spacer()
-                CaptureButton(action: captureAction)
+                CaptureButton(action: captureAction, isCapturing: $isCapturing)
                 Spacer()
             }
         }
@@ -34,5 +35,5 @@ struct BottomBarView: View {
 
 
 #Preview {
-    BottomBarView(lastPhoto: nil, captureAction: {}, openPhotosApp: {})
+    BottomBarView(lastPhoto: nil, captureAction: {}, openPhotosApp: {}, isCapturing: .constant(false))
 }

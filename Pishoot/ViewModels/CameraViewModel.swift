@@ -14,11 +14,16 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     private var wideAngleCamera: AVCaptureDevice?
     private var ultraWideCamera: AVCaptureDevice?
     @Published var isFlashOn = false
-    private var isCapturingPhoto = false
+    @Published var isCapturingPhoto = false
     private var capturedImages: [UIImage] = []
     private var completion: (([UIImage]) -> Void)?
     @Published var isBlackScreenVisible = false
-    private var selectedZoomLevel: CGFloat = 1.0
+    @Published var captureProgress: CGFloat = 0
+    @Published var selectedZoomLevel: CGFloat = 1.0
+    @Published var isAdditionalSettingsOpen: Bool = false
+    @Published var timerDuration: Int = 0
+    @Published var countdown: Int = -1
+    private var countdownTimer: Timer?
     
     override init() {
         super.init()
@@ -116,12 +121,43 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
             print("Error setting zoom factor: \(error)")
         }
         
+        if timerDuration > 0 {
+            countdown = timerDuration
+            flashCountdown()
+            countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+                guard let self = self else { return }
+                if self.countdown > 1 {
+                    self.flashCountdown()
+                    self.countdown -= 1
+                } else {
+                    self.countdown -= 1
+                    timer.invalidate()
+                    self.takePhotos(photoSettings: photoSettings)
+                }
+            }
+        } else {
+            takePhotos(photoSettings: photoSettings)
+        }
+        
+    }
+    
+    private func flashCountdown() {
+        turnTorch(on: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.turnTorch(on: false)
+        }
+    }
+    
+    private func takePhotos(photoSettings: AVCapturePhotoSettings) {
         if isFlashOn {
             turnTorch(on: true)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.isBlackScreenVisible = true
-            
+            self.captureProgress = 0
+            withAnimation(.linear(duration: 0.5)) {
+                self.captureProgress = 1
+            }
             self.ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
             self.wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
         }
@@ -247,6 +283,10 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
                 self.turnTorch(on: false)
             }
         }
+    }
+    
+    func toggleAdditionalSettings() {
+        isAdditionalSettingsOpen.toggle()
     }
 }
 
