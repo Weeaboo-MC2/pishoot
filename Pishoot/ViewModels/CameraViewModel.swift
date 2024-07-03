@@ -1,15 +1,8 @@
-//
-//  CameraViewModel.swift
-//  Pishoot
-//
-//  Created by Muhammad Zikrurridho Afwani on 25/06/24.
-
-
 import SwiftUI
 import AVFoundation
 import Photos
 
-class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate {
+class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
     @Published var session: AVCaptureMultiCamSession?
     private var wideAngleOutput: AVCapturePhotoOutput?
     private var ultraWideOutput: AVCapturePhotoOutput?
@@ -21,6 +14,8 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     private var isCapturingPhoto = false
     private var capturedImages: [UIImage] = []
     private var completion: (([UIImage]) -> Void)?
+    
+    private var videoDataOutput: AVCaptureVideoDataOutput?
     
     override init() {
         super.init()
@@ -40,9 +35,10 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         
         setupCamera(.builtInWideAngleCamera, to: session)
         setupCamera(.builtInUltraWideCamera, to: session)
+        setupVideoDataOutput()
+        
         session.commitConfiguration()
     }
-
     
     private func setupCamera(_ deviceType: AVCaptureDevice.DeviceType, to session: AVCaptureMultiCamSession) {
         guard let device = AVCaptureDevice.default(deviceType, for: .video, position: .back) else { return }
@@ -75,6 +71,15 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         }
     }
     
+    private func setupVideoDataOutput() {
+        let videoDataOutput = AVCaptureVideoDataOutput()
+        videoDataOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
+        if session?.canAddOutput(videoDataOutput) == true {
+            session?.addOutput(videoDataOutput)
+        }
+        self.videoDataOutput = videoDataOutput
+    }
+    
     func startSession() {
         session?.startRunning()
     }
@@ -98,21 +103,20 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         
         ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
         wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
-
     }
     
     func captureZoomedPhotos() {
         guard let wideAngleCamera = wideAngleCamera else { return }
-            do {
-                try wideAngleCamera.lockForConfiguration()
-                wideAngleCamera.videoZoomFactor = 2.0 // Set the digital zoom factor
-                let zoomedPhotoSettings = AVCapturePhotoSettings()
-                zoomedPhotoSettings.flashMode = isFlashOn ? .on : .off
-                wideAngleOutput?.capturePhoto(with: zoomedPhotoSettings, delegate: self)
-                wideAngleCamera.unlockForConfiguration()
-            } catch {
-                print("Error setting zoom factor: \(error)")
-            }
+        do {
+            try wideAngleCamera.lockForConfiguration()
+            wideAngleCamera.videoZoomFactor = 2.0 // Set the digital zoom factor
+            let zoomedPhotoSettings = AVCapturePhotoSettings()
+            zoomedPhotoSettings.flashMode = isFlashOn ? .on : .off
+            wideAngleOutput?.capturePhoto(with: zoomedPhotoSettings, delegate: self)
+            wideAngleCamera.unlockForConfiguration()
+        } catch {
+            print("Error setting zoom factor: \(error)")
+        }
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
@@ -132,11 +136,11 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
                 
                 if self.capturedImages.count == 2 {
                     print("captured 2 images")
-                    captureZoomedPhotos()
+                    self.captureZoomedPhotos()
                 }
                 
                 if self.capturedImages.count == 3 {
-                    backToNormalLens()
+                    self.backToNormalLens()
                     print("captured 3 images")
                     DispatchQueue.main.async {
                         self.completion?(self.capturedImages)
@@ -153,13 +157,23 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     
     func backToNormalLens() {
         guard let wideAngleCamera = wideAngleCamera else { return }
-            do {
-                try wideAngleCamera.lockForConfiguration()
-                wideAngleCamera.videoZoomFactor = 1.0
-                wideAngleCamera.unlockForConfiguration()
-            } catch {
-                print("Error setting zoom factor: \(error)")
-            }
+        do {
+            try wideAngleCamera.lockForConfiguration()
+            wideAngleCamera.videoZoomFactor = 1.0
+            wideAngleCamera.unlockForConfiguration()
+        } catch {
+            print("Error setting zoom factor: \(error)")
+        }
     }
     
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        
+        let ciImage = CIImage(cvImageBuffer: imageBuffer)
+        let context = CIContext()
+        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
+        
+        let image = UIImage(cgImage: cgImage)
+        WatchConnectivityManager.shared.sendPreviewToWatch(image)
+    }
 }
