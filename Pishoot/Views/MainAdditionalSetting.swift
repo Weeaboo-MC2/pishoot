@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct MainAdditionalSetting: View {
-    @Binding var isZoomOptionsVisible: Bool
+    @State private var isZoomOptionsVisible: Bool = false
+    @State private var isTimerOptionsVisible: Bool = false
     @Binding var selectedZoomLevel: CGFloat
     var toggleFlash: () -> Void
     var isFlashOn: Bool
@@ -16,7 +17,7 @@ struct MainAdditionalSetting: View {
     
     var body: some View {
         VStack {
-            if !isZoomOptionsVisible {
+            if !isZoomOptionsVisible && !isTimerOptionsVisible {
                 HStack (spacing: 30) {
                     Button(action: {
                         withAnimation {
@@ -43,6 +44,17 @@ struct MainAdditionalSetting: View {
                     Button(action: {}) {
                         Image(systemName: "target")
                             .foregroundColor(.white)
+                            .frame(width: 40, height: 40)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                    Button(action: {
+                        withAnimation() {
+                            isTimerOptionsVisible.toggle()
+                        }
+                    }) {
+                        Image(systemName: "timer")
+                            .foregroundColor(cameraViewModel.timerDuration == 0 ? .white : .yellow)
                             .frame(width: 40, height: 40)
                             .background(Color.black.opacity(0.5))
                             .clipShape(Circle())
@@ -99,10 +111,56 @@ struct MainAdditionalSetting: View {
                 .clipShape(RoundedRectangle(cornerRadius: 20))
             }
         }
+        
+        if isTimerOptionsVisible {
+            HStack(spacing: 20) {
+                Button(action: {
+                    withAnimation(.spring()) {
+                        isTimerOptionsVisible.toggle()
+                    }
+                }) {
+                    Image(systemName: "timer")
+                        .foregroundColor(cameraViewModel.timerDuration == 0 ? .white : .yellow)
+                        .padding(10)
+                        .background(Color.black.opacity(0.5))
+                        .clipShape(Circle())
+                }
+                Button(action: {
+                    cameraViewModel.timerDuration = 3
+                }) {
+                    Text("3s")
+                        .foregroundColor(cameraViewModel.timerDuration == 3 ? .yellow : .white)
+                        .padding(10)
+                        .background(Color.black.opacity(0.5))
+                        .clipShape(Circle())
+                }
+                Button(action: {
+                    cameraViewModel.timerDuration = 10
+                }) {
+                    Text("10s")
+                        .foregroundColor(cameraViewModel.timerDuration == 10 ? .yellow : .white)
+                        .padding(10)
+                        .background(Color.black.opacity(0.5))
+                        .clipShape(Circle())
+                }
+                Button(action: {
+                    cameraViewModel.timerDuration = 0
+                }) {
+                    Text("Off")
+                        .foregroundColor(cameraViewModel.timerDuration == 0 ? .yellow : .white)
+                        .padding(10)
+                        .background(Color.black.opacity(0.5))
+                        .clipShape(Circle())
+                }
+            }
+            .padding(5)
+            .background(Color.black.opacity(0.5))
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+        }
     }
 }
 
 
 #Preview {
-    MainAdditionalSetting(isZoomOptionsVisible: .constant(false), selectedZoomLevel: Binding<CGFloat>(get: { 1.0 }, set: { _ in }), toggleFlash: {}, isFlashOn: true, cameraViewModel: CameraViewModel())
+    MainAdditionalSetting(selectedZoomLevel: Binding<CGFloat>(get: { 1.0 }, set: { _ in }), toggleFlash: {}, isFlashOn: true, cameraViewModel: CameraViewModel())
 }

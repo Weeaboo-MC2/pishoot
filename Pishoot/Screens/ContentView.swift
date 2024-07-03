@@ -28,7 +28,7 @@ struct ContentView: View {
                             Spacer()
                             
                             if cameraViewModel.isAdditionalSettingsOpen {
-                                MainAdditionalSetting(isZoomOptionsVisible: $cameraViewModel.isZoomOptionsVisible, selectedZoomLevel: $cameraViewModel.selectedZoomLevel,toggleFlash: {
+                                MainAdditionalSetting(selectedZoomLevel: $cameraViewModel.selectedZoomLevel,toggleFlash: {
                                     cameraViewModel.toggleFlash()
                                 }, isFlashOn: cameraViewModel.isFlashOn,  cameraViewModel: cameraViewModel)
                             }

@@ -20,7 +20,9 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     @Published var isBlackScreenVisible = false
     @Published var selectedZoomLevel: CGFloat = 1.0
     @Published var isAdditionalSettingsOpen: Bool = false
-    @Published var isZoomOptionsVisible: Bool = false
+    @Published var timerDuration: Int = 0
+    @Published var countdown: Int = 0
+    private var countdownTimer: Timer?
     
     override init() {
         super.init()
@@ -118,12 +120,36 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
             print("Error setting zoom factor: \(error)")
         }
         
+        if timerDuration > 0 {
+            countdown = timerDuration
+            countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+                guard let self = self else { return }
+                if self.countdown > 0 {
+                    self.flashCountdown()
+                    self.countdown -= 1
+                } else {
+                    timer.invalidate()
+                    self.takePhotos(photoSettings: photoSettings)
+                }
+            }
+        } else {
+            takePhotos(photoSettings: photoSettings)
+        }
+    }
+    
+    private func flashCountdown() {
+        turnTorch(on: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.turnTorch(on: false)
+        }
+    }
+    
+    private func takePhotos(photoSettings: AVCapturePhotoSettings) {
         if isFlashOn {
             turnTorch(on: true)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.isBlackScreenVisible = true
-            
             self.ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
             self.wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
         }
