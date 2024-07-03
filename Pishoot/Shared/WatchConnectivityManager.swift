@@ -39,7 +39,7 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
         
         lastSentTime = currentTime
         DispatchQueue.global(qos: .userInitiated).async {
-            if let resizedImage = self.resizeImage(image, to: CGSize(width: 250, height: 180)),
+            if let resizedImage = CameraManager().resizeImage(image, to: CGSize(width: 250, height: 180)),
                let imageData = resizedImage.jpegData(compressionQuality: self.currentQuality) {
                 let message = ["previewImage": imageData]
                 session.sendMessage(message, replyHandler: nil) { error in
@@ -48,16 +48,7 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
             }
         }
     }
-    
-    private func resizeImage(_ image: UIImage, to size: CGSize) -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
-        image.draw(in: CGRect(origin: .zero, size: size))
-        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return resizedImage
-    }
     #endif
-    
     #if os(watchOS)
     func sendTakePictureCommand() {
         guard let session = session, session.isReachable else { return }

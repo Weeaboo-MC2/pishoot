@@ -13,7 +13,7 @@ struct ContentView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var lastPhotos: [UIImage] = []
     @State var isAdditionalSettingsOpen: Bool = false
-
+    
     var body: some View {
         VStack {
             TopBarView(toggleFlash: {
@@ -23,7 +23,7 @@ struct ContentView: View {
             .padding(.top, 40)
             .padding(.horizontal)
             
-            if let session = cameraViewModel.session {
+            if let session = cameraViewModel.cameraManager.session {
                 CameraPreviewView(session: session)
                     .edgesIgnoringSafeArea(.all)
                     .overlay(
