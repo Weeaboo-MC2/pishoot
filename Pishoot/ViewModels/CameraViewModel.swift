@@ -155,7 +155,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.isBlackScreenVisible = true
             self.captureProgress = 0
-            withAnimation(.linear(duration: 1)) {
+            withAnimation(.linear(duration: 0.5)) {
                 self.captureProgress = 1
             }
             self.ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)

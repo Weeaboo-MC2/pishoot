@@ -15,7 +15,7 @@ struct CaptureButton: View {
     var body: some View {
         Button(action: {
             self.action()
-            withAnimation(.linear(duration: 1)) {
+            withAnimation(.linear(duration: 0.5)) {
                 self.animationProgress = 1
             }
         }) {
