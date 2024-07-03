@@ -10,31 +10,44 @@ import SwiftUI
 struct MainAdditionalSetting: View {
     @Binding var isZoomOptionsVisible: Bool
     @Binding var selectedZoomLevel: CGFloat
+    var toggleFlash: () -> Void
+    var isFlashOn: Bool
     var cameraViewModel: CameraViewModel
-
+    
     var body: some View {
         VStack {
-           if !isZoomOptionsVisible {
-               HStack (spacing: 30) {
-                   Button(action: {
-                       withAnimation() {
-                           isZoomOptionsVisible.toggle()
-                       }
-                   }) {
-                       Image(systemName: "plus.magnifyingglass")
-                           .foregroundColor(.white)
-                           .padding(10)
-                           .background(Color.black.opacity(0.5))
-                           .clipShape(Circle())
-                   }
-                   Button(action: {}) {
-                       Image(systemName: "target")
-                           .foregroundColor(.white)
-                           .padding(10)
-                           .background(Color.black.opacity(0.5))
-                           .clipShape(Circle())
-                   }
-               }
+            if !isZoomOptionsVisible {
+                HStack (spacing: 30) {
+                    Button(action: {
+                        withAnimation {
+                            toggleFlash()
+                        }
+                    }) {
+                        Image(systemName: isFlashOn ? "bolt.fill" : "bolt.slash.fill")
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(isFlashOn ? .yellow : .white)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                    Button(action: {
+                        withAnimation() {
+                            isZoomOptionsVisible.toggle()
+                        }
+                    }) {
+                        Image(systemName: "plus.magnifyingglass")
+                            .foregroundColor(.white)
+                            .frame(width: 40, height: 40)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                    Button(action: {}) {
+                        Image(systemName: "target")
+                            .foregroundColor(.white)
+                            .frame(width: 40, height: 40)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                }
             }
             
             if isZoomOptionsVisible {
@@ -91,5 +104,5 @@ struct MainAdditionalSetting: View {
 
 
 #Preview {
-    MainAdditionalSetting(isZoomOptionsVisible: .constant(true), selectedZoomLevel: Binding<CGFloat>(get: { 1.0 }, set: { _ in }), cameraViewModel: CameraViewModel())
+    MainAdditionalSetting(isZoomOptionsVisible: .constant(false), selectedZoomLevel: Binding<CGFloat>(get: { 1.0 }, set: { _ in }), toggleFlash: {}, isFlashOn: true, cameraViewModel: CameraViewModel())
 }

@@ -18,7 +18,9 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     private var capturedImages: [UIImage] = []
     private var completion: (([UIImage]) -> Void)?
     @Published var isBlackScreenVisible = false
-    private var selectedZoomLevel: CGFloat = 1.0
+    @Published var selectedZoomLevel: CGFloat = 1.0
+    @Published var isAdditionalSettingsOpen: Bool = false
+    @Published var isZoomOptionsVisible: Bool = false
     
     override init() {
         super.init()
@@ -247,6 +249,10 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
                 self.turnTorch(on: false)
             }
         }
+    }
+    
+    func toggleAdditionalSettings() {
+        isAdditionalSettingsOpen.toggle()
     }
 }
 
