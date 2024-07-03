@@ -11,7 +11,7 @@ import SwiftUI
 struct PishootApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            OnBoardingContainerView()
         }
     }
 }

@@ -19,6 +19,11 @@
 		0F8458EF2C2ABA2C0033FED7 /* BottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458EE2C2ABA2C0033FED7 /* BottomBarView.swift */; };
 		0F8458F12C2ABA8C0033FED7 /* PhotoThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458F02C2ABA8C0033FED7 /* PhotoThumbnailView.swift */; };
 		0F8458F52C2BB7AB0033FED7 /* MainAdditionalSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458F42C2BB7AB0033FED7 /* MainAdditionalSetting.swift */; };
+		158868172C35B81D0042FAB2 /* OnBoardingDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158868162C35B81D0042FAB2 /* OnBoardingDataModel.swift */; };
+		158868192C35B83E0042FAB2 /* ProgressViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158868182C35B83E0042FAB2 /* ProgressViewStyle.swift */; };
+		1588681F2C35B8A40042FAB2 /* OnBoardingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1588681E2C35B8A40042FAB2 /* OnBoardingContainerView.swift */; };
+		158868212C35BA2F0042FAB2 /* WelcomeOnBoarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158868202C35BA2F0042FAB2 /* WelcomeOnBoarding.swift */; };
+		158868232C35BA690042FAB2 /* OnBoardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158868222C35BA690042FAB2 /* OnBoardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +40,11 @@
 		0F8458EE2C2ABA2C0033FED7 /* BottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarView.swift; sourceTree = "<group>"; };
 		0F8458F02C2ABA8C0033FED7 /* PhotoThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoThumbnailView.swift; sourceTree = "<group>"; };
 		0F8458F42C2BB7AB0033FED7 /* MainAdditionalSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAdditionalSetting.swift; sourceTree = "<group>"; };
+		158868162C35B81D0042FAB2 /* OnBoardingDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingDataModel.swift; sourceTree = "<group>"; };
+		158868182C35B83E0042FAB2 /* ProgressViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressViewStyle.swift; sourceTree = "<group>"; };
+		1588681E2C35B8A40042FAB2 /* OnBoardingContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingContainerView.swift; sourceTree = "<group>"; };
+		158868202C35BA2F0042FAB2 /* WelcomeOnBoarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeOnBoarding.swift; sourceTree = "<group>"; };
+		158868222C35BA690042FAB2 /* OnBoardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +77,7 @@
 		0F8458D12C2AB4130033FED7 /* Pishoot */ = {
 			isa = PBXGroup;
 			children = (
+				158868072C34E0B10042FAB2 /* OnBoarding */,
 				0F8458E32C2AB7670033FED7 /* Screens */,
 				0F8458E22C2AB74D0033FED7 /* Utilities */,
 				0F8458E12C2AB7400033FED7 /* ViewModels */,
@@ -121,6 +132,18 @@
 				0F8458D42C2AB4130033FED7 /* ContentView.swift */,
 			);
 			path = Screens;
+			sourceTree = "<group>";
+		};
+		158868072C34E0B10042FAB2 /* OnBoarding */ = {
+			isa = PBXGroup;
+			children = (
+				158868162C35B81D0042FAB2 /* OnBoardingDataModel.swift */,
+				158868182C35B83E0042FAB2 /* ProgressViewStyle.swift */,
+				1588681E2C35B8A40042FAB2 /* OnBoardingContainerView.swift */,
+				158868202C35BA2F0042FAB2 /* WelcomeOnBoarding.swift */,
+				158868222C35BA690042FAB2 /* OnBoardingView.swift */,
+			);
+			path = OnBoarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -196,11 +219,16 @@
 				0F8458D52C2AB4130033FED7 /* ContentView.swift in Sources */,
 				0F8458D32C2AB4130033FED7 /* PishootApp.swift in Sources */,
 				0F8458F52C2BB7AB0033FED7 /* MainAdditionalSetting.swift in Sources */,
+				158868192C35B83E0042FAB2 /* ProgressViewStyle.swift in Sources */,
 				0F8458E92C2AB9170033FED7 /* CameraPreviewView.swift in Sources */,
 				0F8458EF2C2ABA2C0033FED7 /* BottomBarView.swift in Sources */,
+				158868232C35BA690042FAB2 /* OnBoardingView.swift in Sources */,
 				0F8458E72C2AB8CD0033FED7 /* PhotoLibraryHelper.swift in Sources */,
 				0F8458ED2C2AB9C20033FED7 /* TopBarView.swift in Sources */,
+				158868172C35B81D0042FAB2 /* OnBoardingDataModel.swift in Sources */,
 				0F8458F12C2ABA8C0033FED7 /* PhotoThumbnailView.swift in Sources */,
+				1588681F2C35B8A40042FAB2 /* OnBoardingContainerView.swift in Sources */,
+				158868212C35BA2F0042FAB2 /* WelcomeOnBoarding.swift in Sources */,
 				0F8458EB2C2AB97E0033FED7 /* CaptureButton.swift in Sources */,
 				0F8458E52C2AB8800033FED7 /* CameraViewModel.swift in Sources */,
 			);
@@ -333,10 +361,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pishoot/Preview Content\"";
-				DEVELOPMENT_TEAM = VFLSGXGQ55;
+				DEVELOPMENT_TEAM = FL93XG3U4N;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to allow you to take photos.";
@@ -352,8 +381,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.ridhoafwani.Pishoot;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.nadhirul.Pishoot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -365,10 +395,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pishoot/Preview Content\"";
-				DEVELOPMENT_TEAM = VFLSGXGQ55;
+				DEVELOPMENT_TEAM = FL93XG3U4N;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to allow you to take photos.";
@@ -384,8 +415,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.ridhoafwani.Pishoot;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.nadhirul.Pishoot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
