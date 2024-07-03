@@ -12,15 +12,25 @@ struct CameraPreviewView: UIViewRepresentable {
     class CameraPreview: UIView {
         var previewLayer: AVCaptureVideoPreviewLayer
         var blackScreenView: UIView
+        var countdownLabel: UILabel
         
         override init(frame: CGRect) {
             previewLayer = AVCaptureVideoPreviewLayer()
             blackScreenView = UIView()
+            countdownLabel = UILabel()
+            
             blackScreenView.backgroundColor = .black
             blackScreenView.alpha = 0
+            
+            countdownLabel.textAlignment = .center
+            countdownLabel.textColor = .white
+            countdownLabel.font = UIFont.systemFont(ofSize: 100, weight: .bold)
+            countdownLabel.alpha = 0
+            
             super.init(frame: frame)
             layer.addSublayer(previewLayer)
             addSubview(blackScreenView)
+            addSubview(countdownLabel)
         }
         
         required init?(coder: NSCoder) {
@@ -31,11 +41,13 @@ struct CameraPreviewView: UIViewRepresentable {
             super.layoutSubviews()
             previewLayer.frame = bounds
             blackScreenView.frame = bounds
+            countdownLabel.frame = bounds
         }
     }
     
     var session: AVCaptureSession
     @Binding var isBlackScreenVisible: Bool
+    @Binding var countdown: Int
     
     func makeUIView(context: Context) -> CameraPreview {
         let view = CameraPreview()
@@ -63,5 +75,7 @@ struct CameraPreviewView: UIViewRepresentable {
     
     func updateUIView(_ uiView: CameraPreview, context: Context) {
         uiView.blackScreenView.alpha = isBlackScreenVisible ? 1 : 0
+        uiView.countdownLabel.text = "\(countdown)"
+        uiView.countdownLabel.alpha = countdown > 0 ? 1 : 0
     }
 }

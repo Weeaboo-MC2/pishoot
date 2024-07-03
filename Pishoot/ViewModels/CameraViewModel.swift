@@ -21,7 +21,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     @Published var selectedZoomLevel: CGFloat = 1.0
     @Published var isAdditionalSettingsOpen: Bool = false
     @Published var timerDuration: Int = 0
-    @Published var countdown: Int = 0
+    @Published var countdown: Int = -1
     private var countdownTimer: Timer?
     
     override init() {
@@ -122,12 +122,14 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         
         if timerDuration > 0 {
             countdown = timerDuration
+            flashCountdown()
             countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
                 guard let self = self else { return }
-                if self.countdown > 0 {
+                if self.countdown > 1 {
                     self.flashCountdown()
                     self.countdown -= 1
                 } else {
+                    self.countdown -= 1
                     timer.invalidate()
                     self.takePhotos(photoSettings: photoSettings)
                 }
@@ -135,6 +137,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         } else {
             takePhotos(photoSettings: photoSettings)
         }
+        
     }
     
     private func flashCountdown() {

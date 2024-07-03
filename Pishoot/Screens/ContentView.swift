@@ -21,7 +21,7 @@ struct ContentView: View {
             .padding(.horizontal)
             
             if let session = cameraViewModel.session {
-                CameraPreviewView(session: session, isBlackScreenVisible: $cameraViewModel.isBlackScreenVisible)
+                CameraPreviewView(session: session, isBlackScreenVisible: $cameraViewModel.isBlackScreenVisible, countdown: $cameraViewModel.countdown)
                     .edgesIgnoringSafeArea(.all)
                     .overlay(
                         VStack {
