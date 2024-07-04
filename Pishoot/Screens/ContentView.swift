@@ -5,6 +5,7 @@ struct ContentView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var lastPhotos: [UIImage] = []
     @State var isAdditionalSettingsOpen: Bool = false
+    @Environment(\.scenePhase) private var scenePhase
     
     var body: some View {
         VStack {
@@ -40,23 +41,35 @@ struct ContentView: View {
                 Text("Camera not available")
             }
         }
-        .onAppear {
+        .statusBar(hidden: true)
+        .ignoresSafeArea()
+        .onChange(of: scenePhase) { oldPhase, newPhase in
+            handleScenePhaseChange(newPhase)
+        }
+    }
+    
+    func toggleAdditionalSettings() {
+        isAdditionalSettingsOpen.toggle()
+    }
+    
+    private func handleScenePhaseChange(_ newPhase: ScenePhase) {
+        switch newPhase {
+        case .active:
+            print("App became active")
             cameraViewModel.startSession()
             PhotoLibraryHelper.fetchLastPhoto { image in
                 if let image = image {
                     self.lastPhotos = [image]
                 }
             }
-        }
-        .onDisappear {
+        case .inactive:
+            print("App became inactive")
+        case .background:
+            print("App went to background")
             cameraViewModel.stopSession()
+        @unknown default:
+            print("Unknown scene phase")
         }
-        .statusBar(hidden: true)
-        .ignoresSafeArea()
-    }
-    
-    func toggleAdditionalSettings() {
-        isAdditionalSettingsOpen.toggle()
     }
 }
 

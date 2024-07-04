@@ -99,6 +99,7 @@
 		0F8458C62C2AB4130033FED7 = {
 			isa = PBXGroup;
 			children = (
+				E9E5A4982C3545FD005EB61A /* Shared */,
 				0F8458D12C2AB4130033FED7 /* Pishoot */,
 				E9E5A4872C3545F4005EB61A /* PishootWatch Watch App */,
 				0F8458D02C2AB4130033FED7 /* Products */,
@@ -117,7 +118,6 @@
 		0F8458D12C2AB4130033FED7 /* Pishoot */ = {
 			isa = PBXGroup;
 			children = (
-				E9E5A4982C3545FD005EB61A /* Shared */,
 				0F8458E32C2AB7670033FED7 /* Screens */,
 				0F8458E22C2AB74D0033FED7 /* Utilities */,
 				0F8458E12C2AB7400033FED7 /* ViewModels */,

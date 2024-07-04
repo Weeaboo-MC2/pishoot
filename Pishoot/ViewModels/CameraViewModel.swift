@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 class CameraViewModel: ObservableObject {
     @Published var isFlashOn = false

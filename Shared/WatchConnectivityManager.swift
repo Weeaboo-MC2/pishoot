@@ -15,6 +15,7 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
     var takePictureOnWatch: (() -> Void)?
     #elseif os(watchOS)
     @Published var previewImage: Data?
+    @Published var isIOSAppReachable = false
     #endif
     
     private var lastSentTime: Date = Date()
@@ -49,14 +50,19 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
         }
     }
     #endif
+    
     #if os(watchOS)
     func sendTakePictureCommand() {
         guard let session = session, session.isReachable else { return }
-        print("Send command to iphone")
+        print("Send command to iPhone")
         let message = ["command": "takePicture"]
         session.sendMessage(message, replyHandler: nil) { error in
             print("Error sending take picture command: \(error.localizedDescription)")
         }
+    }
+    
+    func updateIOSAppReachability() {
+        isIOSAppReachable = session?.isReachable ?? false
     }
     #endif
     
@@ -65,6 +71,9 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
             print("WCSession activation failed: \(error.localizedDescription)")
         } else {
             print("WCSession activated with state: \(activationState.rawValue)")
+            #if os(watchOS)
+            updateIOSAppReachability()
+            #endif
         }
     }
     
@@ -84,6 +93,12 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
             }
             #endif
         }
+    }
+    
+    func sessionReachabilityDidChange(_ session: WCSession) {
+        #if os(watchOS)
+        updateIOSAppReachability()
+        #endif
     }
     
     #if os(iOS)
