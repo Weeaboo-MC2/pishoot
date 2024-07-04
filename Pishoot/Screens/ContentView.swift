@@ -11,7 +11,7 @@ import AVFoundation
 struct ContentView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var lastPhotos: [UIImage] = []
-
+    @State var isMarkerOn: Bool = false
     var body: some View {
         VStack {
             TopBarView(toggleAdditionalSettings: cameraViewModel.toggleAdditionalSettings,
@@ -27,16 +27,16 @@ struct ContentView: View {
                             BlackScreenView(progress: $cameraViewModel.captureProgress)
                                 .opacity(cameraViewModel.isBlackScreenVisible ? 1 : 0)
                         )
-
+                    
                     VStack {
                         Spacer()
                         
                         if cameraViewModel.isAdditionalSettingsOpen {
-                            MainAdditionalSetting(selectedZoomLevel: $cameraViewModel.selectedZoomLevel, toggleFlash: {
+                            MainAdditionalSetting(selectedZoomLevel: $cameraViewModel.selectedZoomLevel, isMarkerOn:$isMarkerOn, toggleFlash: {
                                 cameraViewModel.toggleFlash()
                             }, isFlashOn: cameraViewModel.isFlashOn, cameraViewModel: cameraViewModel)
                         }
-
+                        
                         BottomBarView(lastPhoto: lastPhotos.first, captureAction: {
                             cameraViewModel.capturePhotos { images in
                                 self.lastPhotos = images
@@ -44,10 +44,11 @@ struct ContentView: View {
                         }, openPhotosApp: {
                             PhotoLibraryHelper.openPhotosApp()
                         },
-                            isCapturing: $cameraViewModel.isCapturingPhoto
+                                      isCapturing: $cameraViewModel.isCapturingPhoto
                         )
                         .padding(.bottom, 20)
                     }
+                    Marker(isMarkerOn: $isMarkerOn)
                 }
             } else {
                 Text("Camera not available")
