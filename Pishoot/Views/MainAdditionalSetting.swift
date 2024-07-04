@@ -11,6 +11,7 @@ struct MainAdditionalSetting: View {
     @State private var isZoomOptionsVisible: Bool = false
     @State private var isTimerOptionsVisible: Bool = false
     @Binding var selectedZoomLevel: CGFloat
+    @Binding var isMarkerOn: Bool
     var toggleFlash: () -> Void
     var isFlashOn: Bool
     var cameraViewModel: CameraViewModel
@@ -41,7 +42,10 @@ struct MainAdditionalSetting: View {
                             .background(Color.black.opacity(0.5))
                             .clipShape(Circle())
                     }
-                    Button(action: {}) {
+                    Button(action: {
+                        isMarkerOn.toggle()
+                        
+                    }) {
                         Image(systemName: "target")
                             .foregroundColor(.white)
                             .frame(width: 40, height: 40)
@@ -148,5 +152,5 @@ struct MainAdditionalSetting: View {
 
 
 #Preview {
-    MainAdditionalSetting(selectedZoomLevel: Binding<CGFloat>(get: { 1.0 }, set: { _ in }), toggleFlash: {}, isFlashOn: true, cameraViewModel: CameraViewModel())
+    MainAdditionalSetting(selectedZoomLevel: Binding<CGFloat>(get: { 1.0 }, set: { _ in }), isMarkerOn:.constant(false), toggleFlash: {}, isFlashOn: true, cameraViewModel: CameraViewModel())
 }
