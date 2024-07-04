@@ -11,12 +11,21 @@ import AVFoundation
 struct CameraPreviewView: UIViewRepresentable {
     class CameraPreview: UIView {
         var previewLayer: AVCaptureVideoPreviewLayer
+        var countdownLabel: UILabel
 
         override init(frame: CGRect) {
             previewLayer = AVCaptureVideoPreviewLayer()
+            
+            countdownLabel = UILabel()
+            
+            countdownLabel.textAlignment = .center
+            countdownLabel.textColor = .white
+            countdownLabel.font = UIFont.systemFont(ofSize: 100, weight: .bold)
+            countdownLabel.alpha = 0
 
             super.init(frame: frame)
             layer.addSublayer(previewLayer)
+            addSubview(countdownLabel)
         }
 
         required init?(coder: NSCoder) {
@@ -26,10 +35,12 @@ struct CameraPreviewView: UIViewRepresentable {
         override func layoutSubviews() {
             super.layoutSubviews()
             previewLayer.frame = bounds
+            countdownLabel.frame = bounds
         }
     }
 
     var session: AVCaptureSession
+    @Binding var countdown: Int
 
     func makeUIView(context: Context) -> CameraPreview {
         let view = CameraPreview()
@@ -56,7 +67,8 @@ struct CameraPreviewView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: CameraPreview, context: Context) {
-        // No need to update anything here for black screen as it's now managed in ContentView
+        uiView.countdownLabel.text = "\(countdown)"
+        uiView.countdownLabel.alpha = countdown > 0 ? 1 : 0
     }
 }
 
@@ -64,5 +76,3 @@ struct CameraPreviewView: UIViewRepresentable {
 #Preview {
     ContentView()
 }
-
-

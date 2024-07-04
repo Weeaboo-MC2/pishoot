@@ -20,7 +20,7 @@ struct ContentView: View {
             
             if let session = cameraViewModel.session {
                 ZStack {
-                    CameraPreviewView(session: session)
+                    CameraPreviewView(session: session, countdown: $cameraViewModel.countdown)
                         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 16 / 9)
                         .clipped()
                         .overlay(

@@ -111,17 +111,6 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
         let photoSettings = AVCapturePhotoSettings()
         photoSettings.flashMode = isFlashOn ? .off : .off
         
-        guard let wideAngleCamera = wideAngleCamera else { return }
-        do {
-            if wideAngleCamera.videoZoomFactor != 1.0 {
-                try wideAngleCamera.lockForConfiguration()
-                wideAngleCamera.videoZoomFactor = 1.0
-                wideAngleCamera.unlockForConfiguration()
-            }
-        } catch {
-            print("Error setting zoom factor: \(error)")
-        }
-        
         if timerDuration > 0 {
             countdown = timerDuration
             flashCountdown()
@@ -150,6 +139,17 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     }
     
     private func takePhotos(photoSettings: AVCapturePhotoSettings) {
+        guard let wideAngleCamera = wideAngleCamera else { return }
+        do {
+            if wideAngleCamera.videoZoomFactor != 1.0 {
+                try wideAngleCamera.lockForConfiguration()
+                wideAngleCamera.videoZoomFactor = 1.0
+                wideAngleCamera.unlockForConfiguration()
+            }
+        } catch {
+            print("Error setting zoom factor: \(error)")
+        }
+        
         if isFlashOn {
             turnTorch(on: true)
         }
