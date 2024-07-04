@@ -20,6 +20,7 @@
 		0F8458EF2C2ABA2C0033FED7 /* BottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458EE2C2ABA2C0033FED7 /* BottomBarView.swift */; };
 		0F8458F12C2ABA8C0033FED7 /* PhotoThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458F02C2ABA8C0033FED7 /* PhotoThumbnailView.swift */; };
 		0F8458F52C2BB7AB0033FED7 /* MainAdditionalSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458F42C2BB7AB0033FED7 /* MainAdditionalSetting.swift */; };
+		279E1D9F2C36E21D0078C2A1 /* Marker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279E1D9E2C36E21D0078C2A1 /* Marker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		0F8458EE2C2ABA2C0033FED7 /* BottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarView.swift; sourceTree = "<group>"; };
 		0F8458F02C2ABA8C0033FED7 /* PhotoThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoThumbnailView.swift; sourceTree = "<group>"; };
 		0F8458F42C2BB7AB0033FED7 /* MainAdditionalSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAdditionalSetting.swift; sourceTree = "<group>"; };
+		279E1D9E2C36E21D0078C2A1 /* Marker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Marker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 				0F8458F02C2ABA8C0033FED7 /* PhotoThumbnailView.swift */,
 				0F8458F42C2BB7AB0033FED7 /* MainAdditionalSetting.swift */,
 				0F05D7002C35985400F961C7 /* BlackScreenView.swift */,
+				279E1D9E2C36E21D0078C2A1 /* Marker.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -201,6 +204,7 @@
 				0F8458F52C2BB7AB0033FED7 /* MainAdditionalSetting.swift in Sources */,
 				0F8458E92C2AB9170033FED7 /* CameraPreviewView.swift in Sources */,
 				0F8458EF2C2ABA2C0033FED7 /* BottomBarView.swift in Sources */,
+				279E1D9F2C36E21D0078C2A1 /* Marker.swift in Sources */,
 				0F8458E72C2AB8CD0033FED7 /* PhotoLibraryHelper.swift in Sources */,
 				0F8458ED2C2AB9C20033FED7 /* TopBarView.swift in Sources */,
 				0F8458F12C2ABA8C0033FED7 /* PhotoThumbnailView.swift in Sources */,
@@ -340,7 +344,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pishoot/Preview Content\"";
-				DEVELOPMENT_TEAM = VFLSGXGQ55;
+				DEVELOPMENT_TEAM = AH25932TQA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to allow you to take photos.";
@@ -372,7 +376,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pishoot/Preview Content\"";
-				DEVELOPMENT_TEAM = VFLSGXGQ55;
+				DEVELOPMENT_TEAM = AH25932TQA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to allow you to take photos.";
