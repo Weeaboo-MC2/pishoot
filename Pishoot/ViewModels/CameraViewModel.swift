@@ -23,6 +23,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     @Published var isAdditionalSettingsOpen: Bool = false
     @Published var timerDuration: Int = 0
     @Published var countdown: Int = -1
+    @Published var position: CGPoint = CGPoint(x: 393.0/2, y:  852.0/2)
     private var countdownTimer: Timer?
     
     override init() {
