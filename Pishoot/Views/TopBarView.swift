@@ -25,7 +25,6 @@ struct TopBarView: View {
                     .clipShape(Circle())
             }
         }
-        .padding()
     }
 }
 
