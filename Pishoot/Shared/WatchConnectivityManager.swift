@@ -12,7 +12,7 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
     @Published var session: WCSession?
     #if os(iOS)
     @Published var previewImage: UIImage?
-    var takePictureCallback: (() -> Void)?
+    var takePictureOnWatch: (() -> Void)?
     #elseif os(watchOS)
     @Published var previewImage: Data?
     #endif
@@ -80,7 +80,7 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
             
             #if os(iOS)
             if let command = message["command"] as? String, command == "takePicture" {
-                self.takePictureCallback?()
+                self.takePictureOnWatch?()
             }
             #endif
         }
