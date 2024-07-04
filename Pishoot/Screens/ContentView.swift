@@ -16,13 +16,13 @@ struct ContentView: View {
         VStack {
             TopBarView(toggleAdditionalSettings: cameraViewModel.toggleAdditionalSettings,
                        isAdditionalSettingsOpen: cameraViewModel.isAdditionalSettingsOpen)
-            .padding(.top, 40)
-            .padding(.horizontal)
+            .padding(.bottom, 5)
             
             if let session = cameraViewModel.session {
                 ZStack {
                     CameraPreviewView(session: session)
-                        .edgesIgnoringSafeArea(.all)
+                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 16 / 9)
+                        .clipped()
                         .overlay(
                             BlackScreenView(progress: $cameraViewModel.captureProgress)
                                 .opacity(cameraViewModel.isBlackScreenVisible ? 1 : 0)
@@ -46,7 +46,7 @@ struct ContentView: View {
                         },
                                       isCapturing: $cameraViewModel.isCapturingPhoto
                         )
-                        .padding(.bottom, 20)
+                        .padding(.bottom, 5)
                     }
                     Marker(isMarkerOn: $isMarkerOn)
                 }
@@ -66,7 +66,6 @@ struct ContentView: View {
             cameraViewModel.stopSession()
         }
         .statusBar(hidden: true)
-        .ignoresSafeArea()
     }
 }
 

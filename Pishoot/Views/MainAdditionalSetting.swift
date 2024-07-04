@@ -19,7 +19,7 @@ struct MainAdditionalSetting: View {
     var body: some View {
         VStack {
             if !isZoomOptionsVisible && !isTimerOptionsVisible {
-                HStack (spacing: 30) {
+                HStack (spacing: 25) {
                     Button(action: {
                         withAnimation {
                             toggleFlash()
@@ -86,8 +86,6 @@ struct MainAdditionalSetting: View {
                         Text("0.5x")
                             .foregroundColor(selectedZoomLevel == 0.5 ? .yellow : .white)
                             .padding(10)
-                            .background(Color.black.opacity(0.5))
-                            .clipShape(Circle())
                     }
                     Button(action: {
                         selectedZoomLevel = 1.0
@@ -96,8 +94,6 @@ struct MainAdditionalSetting: View {
                         Text("1x")
                             .foregroundColor(selectedZoomLevel == 1.0 ? .yellow : .white)
                             .padding(10)
-                            .background(Color.black.opacity(0.5))
-                            .clipShape(Circle())
                     }
                     Button(action: {
                         selectedZoomLevel = 2.0
@@ -106,11 +102,8 @@ struct MainAdditionalSetting: View {
                         Text("2x")
                             .foregroundColor(selectedZoomLevel == 2.0 ? .yellow : .white)
                             .padding(10)
-                            .background(Color.black.opacity(0.5))
-                            .clipShape(Circle())
                     }
                 }
-                .padding(5)
                 .background(Color.black.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
             }
@@ -135,8 +128,6 @@ struct MainAdditionalSetting: View {
                     Text("3s")
                         .foregroundColor(cameraViewModel.timerDuration == 3 ? .yellow : .white)
                         .padding(10)
-                        .background(Color.black.opacity(0.5))
-                        .clipShape(Circle())
                 }
                 Button(action: {
                     cameraViewModel.timerDuration = 10
@@ -144,8 +135,6 @@ struct MainAdditionalSetting: View {
                     Text("10s")
                         .foregroundColor(cameraViewModel.timerDuration == 10 ? .yellow : .white)
                         .padding(10)
-                        .background(Color.black.opacity(0.5))
-                        .clipShape(Circle())
                 }
                 Button(action: {
                     cameraViewModel.timerDuration = 0
@@ -153,11 +142,8 @@ struct MainAdditionalSetting: View {
                     Text("Off")
                         .foregroundColor(cameraViewModel.timerDuration == 0 ? .yellow : .white)
                         .padding(10)
-                        .background(Color.black.opacity(0.5))
-                        .clipShape(Circle())
                 }
             }
-            .padding(5)
             .background(Color.black.opacity(0.5))
             .clipShape(RoundedRectangle(cornerRadius: 20))
         }
