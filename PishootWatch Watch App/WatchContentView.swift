@@ -7,6 +7,10 @@ struct WatchContentView: View {
     
     var body: some View {
         VStack {
+//            Text("isIosAppReachable \(connectivityManager.isIOSAppReachable)")
+//            Text("is Active \(isActive)")
+//            
+            
             ZStack {
                 if isActive {
                     if connectivityManager.isIOSAppReachable {
@@ -36,7 +40,7 @@ struct WatchContentView: View {
                     } else {
                         Text("iOS app not open")
                     }
-                } else {
+                } else if !isActive && connectivityManager.isIOSAppReachable{
                     Color.black.edgesIgnoringSafeArea(.all)
                     Text("Inactive")
                         .foregroundColor(.white)
