@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  Pishoot
-//
-//  Created by Muhammad Zikrurridho Afwani on 25/06/24.
-//
-
 import SwiftUI
 import AVFoundation
 
@@ -12,9 +5,8 @@ struct ContentView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var lastPhotos: [UIImage] = []
     @State var isMarkerOn: Bool = false
-    @State var isAdditionalSettingsOpen: Bool = false
     @Environment(\.scenePhase) private var scenePhase
-    
+     
     var body: some View {
         VStack {
             TopBarView(toggleAdditionalSettings: cameraViewModel.toggleAdditionalSettings,
@@ -35,7 +27,7 @@ struct ContentView: View {
                         Spacer()
                         
                         if cameraViewModel.isAdditionalSettingsOpen {
-                            MainAdditionalSetting(selectedZoomLevel: $cameraViewModel.selectedZoomLevel, isMarkerOn:$isMarkerOn, toggleFlash: {
+                            MainAdditionalSetting(selectedZoomLevel: $cameraViewModel.selectedZoomLevel, isMarkerOn: $isMarkerOn, toggleFlash: {
                                 cameraViewModel.toggleFlash()
                             }, isFlashOn: cameraViewModel.isFlashOn, cameraViewModel: cameraViewModel)
                         }
@@ -58,14 +50,9 @@ struct ContentView: View {
             }
         }
         .statusBar(hidden: true)
-        
         .onChange(of: scenePhase) { oldPhase, newPhase in
             handleScenePhaseChange(newPhase)
         }
-    }
-    
-    func toggleAdditionalSettings() {
-        isAdditionalSettingsOpen.toggle()
     }
     
     private func handleScenePhaseChange(_ newPhase: ScenePhase) {
@@ -86,7 +73,6 @@ struct ContentView: View {
         @unknown default:
             print("Unknown scene phase")
         }
-     
     }
 }
 

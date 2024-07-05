@@ -1,5 +1,6 @@
 import Foundation
 import WatchConnectivity
+
 #if os(iOS)
 import UIKit
 #elseif os(watchOS)
@@ -10,6 +11,7 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
     static let shared = WatchConnectivityManager()
     
     @Published var session: WCSession?
+    
     #if os(iOS)
     @Published var previewImage: UIImage?
     var takePictureOnWatch: (() -> Void)?
@@ -40,7 +42,7 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
         
         lastSentTime = currentTime
         DispatchQueue.global(qos: .userInitiated).async {
-            if let resizedImage = CameraViewModel().resizeImage(image, to: CGSize(width: 300, height: 200)),
+            if let resizedImage = self.resizeImage(image, to: CGSize(width: 300, height: 200)),
                let imageData = resizedImage.jpegData(compressionQuality: self.currentQuality) {
                 let message = ["previewImage": imageData]
                 session.sendMessage(message, replyHandler: nil) { error in
@@ -48,6 +50,14 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
                 }
             }
         }
+    }
+    
+    private func resizeImage(_ image: UIImage, to size: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
+        image.draw(in: CGRect(origin: .zero, size: size))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return resizedImage
     }
     #endif
     

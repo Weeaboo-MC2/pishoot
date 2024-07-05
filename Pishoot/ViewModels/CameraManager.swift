@@ -11,7 +11,7 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     private var ultraWideCamera: AVCaptureDevice?
     
     private var videoDataOutput: AVCaptureVideoDataOutput?
-    
+    @Published var selectedZoomLevel: CGFloat = 1.0
     private var capturedImages: [UIImage] = []
     private var completion: (([UIImage]) -> Void)?
     
@@ -31,9 +31,13 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         
         let session = AVCaptureMultiCamSession()
         self.session = session
+        
         session.beginConfiguration()
+        
         setupCamera(.builtInWideAngleCamera, to: session)
         setupCamera(.builtInUltraWideCamera, to: session)
+        setupVideoDataOutput()
+        
         session.commitConfiguration()
     }
     
@@ -113,6 +117,51 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
             wideAngleCamera.unlockForConfiguration()
         } catch {
             print("Error setting zoom factor: \(error)")
+        }
+    }
+    
+    
+    func setZoomLevel(zoomLevel: CGFloat) {
+        selectedZoomLevel = zoomLevel
+        if zoomLevel == 0.5 {
+            switchToUltraWideCamera()
+        } else {
+            switchToWideAngleCamera(zoomLevel: zoomLevel)
+        }
+    }
+    
+    private func switchToUltraWideCamera() {
+        guard let session = session, let ultraWideCamera = ultraWideCamera else { return }
+        session.beginConfiguration()
+        for input in session.inputs {
+            session.removeInput(input)
+        }
+        do {
+            let input = try AVCaptureDeviceInput(device: ultraWideCamera)
+            if session.canAddInput(input) {
+                session.addInput(input)
+            }
+            session.commitConfiguration()
+        } catch {
+            print("Error switching to ultra-wide camera: \(error)")
+        }
+    }
+    
+    private func switchToWideAngleCamera(zoomLevel: CGFloat) {
+        guard let session = session, let wideAngleCamera = wideAngleCamera else { return }
+        session.beginConfiguration()
+        for input in session.inputs {
+            session.removeInput(input)
+        }
+        do {
+            let input = try AVCaptureDeviceInput(device: wideAngleCamera)
+            if session.canAddInput(input) {
+                session.addInput(input)
+            }
+            wideAngleCamera.videoZoomFactor = zoomLevel
+            session.commitConfiguration()
+        } catch {
+            print("Error switching to wide-angle camera: \(error)")
         }
     }
     
