@@ -12,10 +12,12 @@ struct ContentView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var lastPhotos: [UIImage] = []
     @State var isMarkerOn: Bool = false
+    @State var isAdditionalSettingsOpen: Bool = false
+    @Environment(\.scenePhase) private var scenePhase
+     
     var body: some View {
         VStack {
-            TopBarView(toggleAdditionalSettings: cameraViewModel.toggleAdditionalSettings,
-                       isAdditionalSettingsOpen: cameraViewModel.isAdditionalSettingsOpen)
+            TopBarView(isAdditionalSettingsOpen: $isAdditionalSettingsOpen)
             .padding(.bottom, 5)
             
             if let session = cameraViewModel.session {
@@ -31,8 +33,8 @@ struct ContentView: View {
                     VStack {
                         Spacer()
                         
-                        if cameraViewModel.isAdditionalSettingsOpen {
-                            MainAdditionalSetting(selectedZoomLevel: $cameraViewModel.selectedZoomLevel, isMarkerOn:$isMarkerOn, toggleFlash: {
+                        if isAdditionalSettingsOpen {
+                            MainAdditionalSetting(selectedZoomLevel: $cameraViewModel.selectedZoomLevel, isMarkerOn: $isMarkerOn, toggleFlash: {
                                 cameraViewModel.toggleFlash()
                             }, isFlashOn: cameraViewModel.isFlashOn, cameraViewModel: cameraViewModel)
                         }
@@ -54,18 +56,30 @@ struct ContentView: View {
                 Text("Camera not available")
             }
         }
-        .onAppear {
+        .statusBar(hidden: true)
+        .onChange(of: scenePhase) { oldPhase, newPhase in
+            handleScenePhaseChange(newPhase)
+        }
+    }
+    
+    private func handleScenePhaseChange(_ newPhase: ScenePhase) {
+        switch newPhase {
+        case .active:
+            print("App became active")
             cameraViewModel.startSession()
             PhotoLibraryHelper.fetchLastPhoto { image in
                 if let image = image {
                     self.lastPhotos = [image]
                 }
             }
-        }
-        .onDisappear {
+        case .inactive:
+            print("App became inactive")
+        case .background:
+            print("App went to background")
             cameraViewModel.stopSession()
+        @unknown default:
+            print("Unknown scene phase")
         }
-        .statusBar(hidden: true)
     }
 }
 

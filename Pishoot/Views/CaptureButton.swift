@@ -37,7 +37,7 @@ struct CaptureButton: View {
                     .rotationEffect(Angle(degrees: -90))
             }
         }
-        .onChange(of: isCapturing) { newValue in
+        .onChange(of: isCapturing) { oldValue, newValue in
             if !newValue {
                 withAnimation(.linear(duration: 0.3)) {
                     self.animationProgress = 0

@@ -24,7 +24,7 @@ struct PhotoLibraryHelper {
             }
         }
     }
-    
+
     static func fetchLastPhoto(completion: @escaping (UIImage?) -> Void) {
         requestPhotoLibraryPermission { authorized in
             if authorized {
@@ -32,7 +32,7 @@ struct PhotoLibraryHelper {
                 fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
                 fetchOptions.fetchLimit = 1
                 let fetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-                
+
                 if let asset = fetchResult.firstObject {
                     let imageManager = PHImageManager.default()
                     let options = PHImageRequestOptions()
