@@ -5,12 +5,12 @@ struct ContentView: View {
     @StateObject private var cameraViewModel = CameraViewModel()
     @State private var lastPhotos: [UIImage] = []
     @State var isMarkerOn: Bool = false
+    @State var isAdditionalSettingsOpen: Bool = false
     @Environment(\.scenePhase) private var scenePhase
      
     var body: some View {
         VStack {
-            TopBarView(toggleAdditionalSettings: cameraViewModel.toggleAdditionalSettings,
-                       isAdditionalSettingsOpen: cameraViewModel.isAdditionalSettingsOpen)
+            TopBarView(isAdditionalSettingsOpen: $isAdditionalSettingsOpen)
             .padding(.bottom, 5)
             
             if let session = cameraViewModel.session {
@@ -26,7 +26,7 @@ struct ContentView: View {
                     VStack {
                         Spacer()
                         
-                        if cameraViewModel.isAdditionalSettingsOpen {
+                        if isAdditionalSettingsOpen {
                             MainAdditionalSetting(selectedZoomLevel: $cameraViewModel.selectedZoomLevel, isMarkerOn: $isMarkerOn, toggleFlash: {
                                 cameraViewModel.toggleFlash()
                             }, isFlashOn: cameraViewModel.isFlashOn, cameraViewModel: cameraViewModel)

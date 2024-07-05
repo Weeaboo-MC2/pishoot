@@ -8,14 +8,13 @@
 import SwiftUI
 
 struct TopBarView: View {
-    var toggleAdditionalSettings: () -> Void
-    var isAdditionalSettingsOpen: Bool
+    @Binding var isAdditionalSettingsOpen: Bool
     
     var body: some View {
         HStack {
             Button(action: {
                 withAnimation() {
-                    toggleAdditionalSettings()
+                    isAdditionalSettingsOpen.toggle()
                 }
             }) {
                 Image(systemName: isAdditionalSettingsOpen ? "chevron.down" : "chevron.up")
@@ -30,5 +29,5 @@ struct TopBarView: View {
 
 
 #Preview {
-    TopBarView(toggleAdditionalSettings: {}, isAdditionalSettingsOpen: false)
+    TopBarView(isAdditionalSettingsOpen: .constant(false))
 }

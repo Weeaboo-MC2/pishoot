@@ -1,6 +1,7 @@
 import AVFoundation
 import Photos
 import UIKit
+import Combine
 
 class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
     var session: AVCaptureMultiCamSession?
@@ -12,13 +13,16 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     
     private var videoDataOutput: AVCaptureVideoDataOutput?
     @Published var selectedZoomLevel: CGFloat = 1.0
+    @Published var isFlashOn: Bool = false
+    @Published var isCapturingPhoto: Bool = false
+    @Published var isBlackScreenVisible: Bool = false
+    
     private var capturedImages: [UIImage] = []
     private var completion: (([UIImage]) -> Void)?
     
-    var isFlashOn = false
-    var isCapturingPhoto = false
+    static let shared = CameraManager()
     
-    override init() {
+    private override init() {
         super.init()
         setupSession()
     }
@@ -100,26 +104,43 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         self.completion = completion
         
         let photoSettings = AVCapturePhotoSettings()
-        photoSettings.flashMode = isFlashOn ? .on : .off
         
-        ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
-        wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
+        guard let wideAngleCamera = wideAngleCamera else { return }
+        do {
+            if wideAngleCamera.videoZoomFactor != 1.0 {
+                try wideAngleCamera.lockForConfiguration()
+                wideAngleCamera.videoZoomFactor = 1.0
+                wideAngleCamera.unlockForConfiguration()
+            }
+        } catch {
+            print("Error setting zoom factor: \(error)")
+        }
+        
+        if isFlashOn {
+            turnTorch(on: true)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.isBlackScreenVisible = true
+            
+            self.ultraWideOutput?.capturePhoto(with: photoSettings, delegate: self)
+            self.wideAngleOutput?.capturePhoto(with: photoSettings, delegate: self)
+        }
     }
     
     func captureZoomedPhotos() {
         guard let wideAngleCamera = wideAngleCamera else { return }
         do {
             try wideAngleCamera.lockForConfiguration()
-            wideAngleCamera.videoZoomFactor = 2.0 // Set the digital zoom factor
+            wideAngleCamera.videoZoomFactor = 2.0
             let zoomedPhotoSettings = AVCapturePhotoSettings()
-            zoomedPhotoSettings.flashMode = isFlashOn ? .on : .off
-            wideAngleOutput?.capturePhoto(with: zoomedPhotoSettings, delegate: self)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.wideAngleOutput?.capturePhoto(with: zoomedPhotoSettings, delegate: self)
+            }
             wideAngleCamera.unlockForConfiguration()
         } catch {
             print("Error setting zoom factor: \(error)")
         }
     }
-    
     
     func setZoomLevel(zoomLevel: CGFloat) {
         selectedZoomLevel = zoomLevel
@@ -166,49 +187,61 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        if let error = error {
-            print("Error capturing photo: \(error)")
-            return
-        }
-        
-        guard let imageData = photo.fileDataRepresentation(),
-              let image = UIImage(data: imageData) else { return }
-        
-        PhotoLibraryHelper.requestPhotoLibraryPermission { [weak self] authorized in
-            guard let self = self else { return }
-            if authorized {
-                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                self.capturedImages.append(image)
-                
-                if self.capturedImages.count == 2 {
-                    print("captured 2 images")
-                    self.captureZoomedPhotos()
+            if let error = error {
+                print("Error capturing photo: \(error)")
+                isBlackScreenVisible = false
+                if isFlashOn {
+                    turnTorch(on: false)
                 }
-                
-                if self.capturedImages.count == 3 {
-                    self.backToNormalLens()
-                    print("captured 3 images")
-                    DispatchQueue.main.async {
-                        self.completion?(self.capturedImages)
-                        self.completion = nil
-                        self.isCapturingPhoto = false
+                return
+            }
+            
+            guard let imageData = photo.fileDataRepresentation(),
+                  let image = UIImage(data: imageData) else { return }
+            
+            PhotoLibraryHelper.requestPhotoLibraryPermission { [weak self] authorized in
+                guard let self = self else { return }
+                if authorized {
+                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                    self.capturedImages.append(image)
+                    
+                    if self.capturedImages.count == 2 {
+                        print("captured 2 images")
+                        self.captureZoomedPhotos()
+                    }
+                    
+                    if self.capturedImages.count == 3 {
+                        self.backToNormalLens()
+                        print("captured 3 images")
+                        DispatchQueue.main.async {
+                            self.completion?(self.capturedImages)
+                            self.completion = nil
+                            self.isCapturingPhoto = false
+                        }
+                    }
+                } else {
+                    print("Photo library access not authorized")
+                    self.isBlackScreenVisible = false
+                    if self.isFlashOn {
+                        self.turnTorch(on: false)
                     }
                 }
-            } else {
-                print("Photo library access not authorized")
-                // Handle the case where the user hasn't granted permission
             }
         }
-    }
     
     func backToNormalLens() {
-        guard let wideAngleCamera = wideAngleCamera else { return }
-        do {
-            try wideAngleCamera.lockForConfiguration()
-            wideAngleCamera.videoZoomFactor = 1.0
-            wideAngleCamera.unlockForConfiguration()
-        } catch {
-            print("Error setting zoom factor: \(error)")
+        if selectedZoomLevel == 0.5 {
+            switchToUltraWideCamera()
+        } else {
+            switchToWideAngleCamera(zoomLevel: selectedZoomLevel)
+        }
+        
+        // Delay hiding the black screen and turning off the torch
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.isBlackScreenVisible = false
+            if self.isFlashOn {
+                self.turnTorch(on: false)
+            }
         }
     }
     
@@ -233,5 +266,19 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return resizedImage
+    }
+    
+    func turnTorch(on: Bool) {
+        guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
+        do {
+            try device.lockForConfiguration()
+            device.torchMode = on ? .on : .off
+            if on {
+                try device.setTorchModeOn(level: 1.0)
+            }
+            device.unlockForConfiguration()
+        } catch {
+            print("Torch could not be used: \(error)")
+        }
     }
 }

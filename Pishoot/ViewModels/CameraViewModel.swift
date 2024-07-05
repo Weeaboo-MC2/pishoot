@@ -1,18 +1,27 @@
 import SwiftUI
 import AVFoundation
+import Combine
 
 class CameraViewModel: ObservableObject {
-    private let cameraManager: CameraManager
+    private var cameraManager: CameraManager
+    private var cancellables = Set<AnyCancellable>()
     
-    @Published var isFlashOn = false
+    @Published var isFlashOn = false {
+        didSet {
+            cameraManager.isFlashOn = isFlashOn
+        }
+    }
     @Published var isCapturingPhoto = false
     @Published var isBlackScreenVisible = false
     @Published var captureProgress: CGFloat = 0
-    @Published var selectedZoomLevel: CGFloat = 1.0
-    @Published var isAdditionalSettingsOpen: Bool = false
+    @Published var selectedZoomLevel: CGFloat = 1.0 {
+        didSet {
+            cameraManager.setZoomLevel(zoomLevel: selectedZoomLevel)
+        }
+    }
     @Published var timerDuration: Int = 0
     @Published var countdown: Int = -1
-    @Published var position: CGPoint = CGPoint(x: 393.0/2, y: 852.0/2)
+    @Published var position: CGPoint = CGPoint(x: 393.0 / 2, y: 852.0 / 2)
     @Published var lastPhotos: [UIImage] = []
     
     private var countdownTimer: Timer?
@@ -21,8 +30,27 @@ class CameraViewModel: ObservableObject {
         cameraManager.session
     }
     
-    init() {
-        self.cameraManager = CameraManager()
+    init(cameraManager: CameraManager = CameraManager.shared) {
+        self.cameraManager = cameraManager
+        bindCameraManager()
+    }
+    
+    private func bindCameraManager() {
+        cameraManager.$isFlashOn
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$isFlashOn)
+        
+        cameraManager.$isCapturingPhoto
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$isCapturingPhoto)
+        
+        cameraManager.$selectedZoomLevel
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$selectedZoomLevel)
+        
+        cameraManager.$isBlackScreenVisible
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$isBlackScreenVisible)
     }
     
     func startSession() {
@@ -35,7 +63,6 @@ class CameraViewModel: ObservableObject {
     
     func toggleFlash() {
         isFlashOn.toggle()
-        cameraManager.toggleFlash()
     }
     
     func capturePhotos(completion: @escaping ([UIImage]) -> Void) {
@@ -49,14 +76,11 @@ class CameraViewModel: ObservableObject {
     }
     
     private func takePictures(completion: @escaping ([UIImage]) -> Void) {
-        isBlackScreenVisible = true
         captureProgress = 0
         withAnimation(.linear(duration: 0.5)) {
             self.captureProgress = 1
         }
-        
         cameraManager.capturePhotos { [weak self] images in
-            self?.isBlackScreenVisible = false
             self?.lastPhotos = images
             completion(images)
         }
@@ -86,27 +110,20 @@ class CameraViewModel: ObservableObject {
     }
     
     func turnTorch(on: Bool) {
-            guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
-            do {
-                try device.lockForConfiguration()
-                device.torchMode = on ? .on : .off
-                if on {
-                    try device.setTorchModeOn(level: 1.0)
-                }
-                device.unlockForConfiguration()
-            } catch {
-                print("Torch could not be used: \(error)")
+        guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
+        do {
+            try device.lockForConfiguration()
+            device.torchMode = on ? .on : .off
+            if on {
+                try device.setTorchModeOn(level: 1.0)
             }
+            device.unlockForConfiguration()
+        } catch {
+            print("Torch could not be used: \(error)")
         }
-    
+    }
     
     func setZoomLevel(zoomLevel: CGFloat) {
-        selectedZoomLevel = zoomLevel
         cameraManager.setZoomLevel(zoomLevel: zoomLevel)
     }
-    
-    func toggleAdditionalSettings() {
-        isAdditionalSettingsOpen.toggle()
-    }
-    
 }
