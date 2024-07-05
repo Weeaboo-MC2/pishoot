@@ -12,7 +12,7 @@ struct BottomBarView: View {
     var captureAction: () -> Void
     var openPhotosApp: () -> Void
     @Binding var isCapturing: Bool
-
+    @Binding var animationProgress: CGFloat 
     var body: some View {
         ZStack {
             HStack(alignment: .center) {
@@ -24,7 +24,7 @@ struct BottomBarView: View {
             
             HStack {
                 Spacer()
-                CaptureButton(action: captureAction, isCapturing: $isCapturing)
+                CaptureButton(action: captureAction, isCapturing: $isCapturing,animationProgress: $animationProgress)
                 Spacer()
             }
         }
@@ -35,5 +35,5 @@ struct BottomBarView: View {
 
 
 #Preview {
-    BottomBarView(lastPhoto: nil, captureAction: {}, openPhotosApp: {}, isCapturing: .constant(false))
+    BottomBarView(lastPhoto: nil, captureAction: {}, openPhotosApp: {}, isCapturing: .constant(false), animationProgress: .constant(0.5))
 }

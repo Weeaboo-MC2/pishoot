@@ -10,7 +10,7 @@ import SwiftUI
 struct CaptureButton: View {
     var action: () -> Void
     @Binding var isCapturing: Bool
-    @State private var animationProgress: CGFloat = 0
+    @Binding var animationProgress: CGFloat
     
     var body: some View {
         Button(action: {
@@ -48,5 +48,5 @@ struct CaptureButton: View {
 }
 
 #Preview {
-    CaptureButton(action: {}, isCapturing: .constant(false))
+    CaptureButton(action: {}, isCapturing: .constant(false),animationProgress: .constant(0.5))
 }
