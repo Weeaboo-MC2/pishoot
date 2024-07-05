@@ -239,8 +239,9 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         }
         
         // Delay hiding the black screen and turning off the torch
+        self.isBlackScreenVisible = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.isBlackScreenVisible = false
+    
             if self.isFlashOn {
                 self.turnTorch(on: false)
             }
