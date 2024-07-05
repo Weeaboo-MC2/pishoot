@@ -12,7 +12,7 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
     @Published var watchScreenSize: Dictionary<String,Float> = ["width":198.0, "height":242.0]
     @Published var iPhoneScreenSize: CGSize = CGSize(width: 393.0, height: 852.0)
     @Published var session: WCSession?
-    @Published var position: CGPoint = CGPoint(x: 99, y: 45)
+    @Published var position: CGPoint = CGPoint(x: 99, y: 90)
     @Published var isWatchSizeSet : Bool = false
     #if os(iOS)
     @Published var previewImage: UIImage?

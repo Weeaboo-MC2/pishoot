@@ -14,11 +14,16 @@ struct ContentView: View {
     @State var isMarkerOn: Bool = false
     @State var isAdditionalSettingsOpen: Bool = false
     @Environment(\.scenePhase) private var scenePhase
-     
+    
+    @State private var showGuide = UserDefaults.standard.bool(forKey: "hasSeenGuide") == false
+    @State private var highlightFrame = CGRect.zero
+    @State private var guideStepIndex = 0
+    @State private var chevronButtonTapped = false
+    
     var body: some View {
         VStack {
             TopBarView(isAdditionalSettingsOpen: $isAdditionalSettingsOpen)
-            .padding(.bottom, 5)
+                .padding(.bottom, 5)
             
             if let session = cameraViewModel.session {
                 ZStack {
@@ -51,10 +56,19 @@ struct ContentView: View {
                         .padding(.bottom, 5)
                     }
                     Marker(isMarkerOn: $isMarkerOn)
+                    if showGuide {
+                        ZStack {
+                            GuideView(isPresented: $showGuide, isAdditionalSettingsOpen: $isAdditionalSettingsOpen, isMarkerOn: $isMarkerOn, steps: guideSteps)
+                                .onPreferenceChange(HighlightFrameKey.self) { value in
+                                    self.highlightFrame = value
+                                }
+                        }
+                    }
                 }
             } else {
                 Text("Camera not available")
             }
+            
         }
         .statusBar(hidden: true)
         .onChange(of: scenePhase) { oldPhase, newPhase in

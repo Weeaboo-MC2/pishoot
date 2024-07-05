@@ -9,10 +9,15 @@ import SwiftUI
 
 @main
 struct PishootApp: App {
+    @StateObject private var appState = AppState()
+    
     var body: some Scene {
         WindowGroup {
-//            ContentView()
-            OnBoardingContainerView()
+            if appState.hasCompletedOnboarding {
+                ContentView()
+            } else {
+                OnBoardingContainerView().environmentObject(appState)
+            }
         }
     }
 }
