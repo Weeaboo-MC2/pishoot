@@ -1,3 +1,9 @@
+//
+//  CameraViewModel.swift
+//  Pishoot
+//
+//  Created by Muhammad Zikrurridho Afwani on 25/06/24.
+
 import SwiftUI
 import AVFoundation
 import Combine
@@ -35,9 +41,10 @@ class CameraViewModel: ObservableObject {
         bindCameraManager()
         
         WatchConnectivityManager.shared.takePictureOnWatch = { [weak self] in
+//            self?.timerDuration = 3
             self?.capturePhotos { images in
-                // Handle the captured images if needed
             }
+//            self?.timerDuration = 0
         }
     }
     

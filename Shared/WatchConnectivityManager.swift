@@ -21,8 +21,8 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
     #endif
     
     private var lastSentTime: Date = Date()
-    private let minTimeBetweenUpdates: TimeInterval = 0.1
-    private var currentQuality: CGFloat = 0.1
+    private let minTimeBetweenUpdates: TimeInterval = 0.2
+    private var currentQuality: CGFloat = 0.2
     
     override init() {
         super.init()
@@ -106,10 +106,12 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
     }
     
     func sessionReachabilityDidChange(_ session: WCSession) {
-        #if os(watchOS)
-        updateIOSAppReachability()
-        #endif
-    }
+            DispatchQueue.main.async {
+                #if os(watchOS)
+                self.updateIOSAppReachability()
+                #endif
+            }
+        }
     
     #if os(iOS)
     func sessionDidBecomeInactive(_ session: WCSession) {

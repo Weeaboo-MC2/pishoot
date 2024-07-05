@@ -187,11 +187,12 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        DispatchQueue.main.async {
             if let error = error {
                 print("Error capturing photo: \(error)")
-                isBlackScreenVisible = false
-                if isFlashOn {
-                    turnTorch(on: false)
+                self.isBlackScreenVisible = false
+                if self.isFlashOn {
+                    self.turnTorch(on: false)
                 }
                 return
             }
@@ -201,33 +202,34 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
             
             PhotoLibraryHelper.requestPhotoLibraryPermission { [weak self] authorized in
                 guard let self = self else { return }
-                if authorized {
-                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                    self.capturedImages.append(image)
-                    
-                    if self.capturedImages.count == 2 {
-                        print("captured 2 images")
-                        self.captureZoomedPhotos()
-                    }
-                    
-                    if self.capturedImages.count == 3 {
-                        self.backToNormalLens()
-                        print("captured 3 images")
-                        DispatchQueue.main.async {
+                DispatchQueue.main.async {
+                    if authorized {
+                        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                        self.capturedImages.append(image)
+                        
+                        if self.capturedImages.count == 2 {
+                            print("captured 2 images")
+                            self.captureZoomedPhotos()
+                        }
+                        
+                        if self.capturedImages.count == 3 {
+                            self.backToNormalLens()
+                            print("captured 3 images")
                             self.completion?(self.capturedImages)
                             self.completion = nil
                             self.isCapturingPhoto = false
                         }
-                    }
-                } else {
-                    print("Photo library access not authorized")
-                    self.isBlackScreenVisible = false
-                    if self.isFlashOn {
-                        self.turnTorch(on: false)
+                    } else {
+                        print("Photo library access not authorized")
+                        self.isBlackScreenVisible = false
+                        if self.isFlashOn {
+                            self.turnTorch(on: false)
+                        }
                     }
                 }
             }
         }
+    }
     
     func backToNormalLens() {
         if selectedZoomLevel == 0.5 {
