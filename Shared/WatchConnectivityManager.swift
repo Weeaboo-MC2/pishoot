@@ -9,9 +9,11 @@ import WatchKit
 
 class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
     static let shared = WatchConnectivityManager()
-    
+    @Published var watchScreenSize: Dictionary<String,Float> = ["width":198.0, "height":242.0]
+    @Published var iPhoneScreenSize: CGSize = CGSize(width: 393.0, height: 852.0)
     @Published var session: WCSession?
-    
+    @Published var position: CGPoint = CGPoint(x: 99, y: 45)
+    @Published var isWatchSizeSet : Bool = false
     #if os(iOS)
     @Published var previewImage: UIImage?
     var takePictureOnWatch: (() -> Void)?
@@ -87,6 +89,12 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
         }
     }
     
+    func send(message: [String: Any]) {
+        session?.sendMessage(message, replyHandler: nil) { error in
+            print("Error sending message: \(error.localizedDescription)")
+        }
+    }
+    
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         DispatchQueue.main.async {
             if let imageData = message["previewImage"] as? Data {
@@ -102,6 +110,16 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
                 self.takePictureOnWatch?()
             }
             #endif
+            if let x = message["x"] as? CGFloat, let y = message["y"] as? CGFloat, let isWatchSizeSet = message["isWatchSizeSet"] as? Bool {
+                self.position = CGPoint(x: x, y: y)
+                if(!isWatchSizeSet){
+                    self.send(message: ["watchSize": self.watchScreenSize])
+                }
+            }
+            if let watchSize = message["watchSize"] as? Dictionary<String,Float> {
+                self.isWatchSizeSet = true
+                self.watchScreenSize = watchSize
+            }
         }
     }
     
@@ -130,4 +148,11 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
                 // Handle the received application context data here
             }
         }
+    func getWatchPosition(_ position: CGPoint) -> Dictionary<String, Float> {
+        let widthScalingFactor: Float = Float(self.watchScreenSize["width"] ?? 1) / Float(iPhoneScreenSize.width)
+        let heightScalingFactor: Float = Float(self.watchScreenSize["height"] ?? 1) / Float(iPhoneScreenSize.height)
+        let scaledX: Float = Float(position.x) * widthScalingFactor
+        let scaledY: Float = Float(position.y) * heightScalingFactor
+        return ["x": scaledX, "y": scaledY]
+    }
 }
