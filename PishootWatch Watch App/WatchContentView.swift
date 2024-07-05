@@ -17,13 +17,25 @@ struct WatchContentView: View {
                         if let imageData = connectivityManager.previewImage,
                            let uiImage = UIImage(data: imageData) {
                             let screenSize = WKInterfaceDevice.current().screenBounds.size
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: screenSize.height, height: screenSize.width)
-                                .clipped()
-                                .rotationEffect(Angle(degrees: 90))
-                                .position(x: screenSize.width / 2, y: screenSize.height / 2)
+                            ZStack {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: screenSize.height, height: screenSize.width)
+                                    .clipped()
+                                    .rotationEffect(Angle(degrees: 90))
+                                    .position(x: screenSize.width / 2, y: screenSize.height / 2)
+                                Image(systemName: "target")
+                                    .resizable()
+                                    .frame(width: 50, height: 50)
+                                    .position(connectivityManager.position)
+                            }
+                            .onAppear{
+                                let watchSize = ["width": Float(screenSize.width), "height": Float(screenSize.height)]
+                                connectivityManager.send(message: ["watchSize": watchSize])
+                                connectivityManager.watchScreenSize = watchSize
+                            }
+                            
                         } else {
                             Text("Waiting for preview...")
                         }
