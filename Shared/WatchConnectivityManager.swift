@@ -40,7 +40,7 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
         
         lastSentTime = currentTime
         DispatchQueue.global(qos: .userInitiated).async {
-            if let resizedImage = CameraManager().resizeImage(image, to: CGSize(width: 300, height: 200)),
+            if let resizedImage = CameraViewModel().resizeImage(image, to: CGSize(width: 300, height: 200)),
                let imageData = resizedImage.jpegData(compressionQuality: self.currentQuality) {
                 let message = ["previewImage": imageData]
                 session.sendMessage(message, replyHandler: nil) { error in

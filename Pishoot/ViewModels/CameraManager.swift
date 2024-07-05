@@ -31,13 +31,9 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         
         let session = AVCaptureMultiCamSession()
         self.session = session
-        
         session.beginConfiguration()
-        
         setupCamera(.builtInWideAngleCamera, to: session)
         setupCamera(.builtInUltraWideCamera, to: session)
-        setupVideoDataOutput()
-        
         session.commitConfiguration()
     }
     

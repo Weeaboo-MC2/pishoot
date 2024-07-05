@@ -58,7 +58,7 @@ struct ContentView: View {
             }
         }
         .statusBar(hidden: true)
-        .ignoresSafeArea()
+        
         .onChange(of: scenePhase) { oldPhase, newPhase in
             handleScenePhaseChange(newPhase)
         }
