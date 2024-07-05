@@ -32,7 +32,7 @@ struct Marker: View {
         }
         .onAppear{
             let iPhoneScreenSize = UIScreen.main.bounds.size
-            position = CGPoint(x: iPhoneScreenSize.width/2, y: iPhoneScreenSize.height/2)
+            position = CGPoint(x: iPhoneScreenSize.width/2, y: iPhoneScreenSize.height/2-150)
             let coordinate = connectivityManager.getWatchPosition(position)
             connectivityManager.send(message: ["x": coordinate["x"] ?? 1, "y": coordinate["y"] ?? 1,"isWatchSizeSet": connectivityManager.isWatchSizeSet])
             connectivityManager.isWatchSizeSet = false
