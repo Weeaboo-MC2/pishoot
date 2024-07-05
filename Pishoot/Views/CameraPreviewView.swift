@@ -8,29 +8,40 @@
 import SwiftUI
 import AVFoundation
 
-
 struct CameraPreviewView: UIViewRepresentable {
     class CameraPreview: UIView {
         var previewLayer: AVCaptureVideoPreviewLayer
-        
+        var countdownLabel: UILabel
+
         override init(frame: CGRect) {
             previewLayer = AVCaptureVideoPreviewLayer()
+            
+            countdownLabel = UILabel()
+            
+            countdownLabel.textAlignment = .center
+            countdownLabel.textColor = .white
+            countdownLabel.font = UIFont.systemFont(ofSize: 100, weight: .bold)
+            countdownLabel.alpha = 0
+
             super.init(frame: frame)
             layer.addSublayer(previewLayer)
+            addSubview(countdownLabel)
         }
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
+
         override func layoutSubviews() {
             super.layoutSubviews()
             previewLayer.frame = bounds
+            countdownLabel.frame = bounds
         }
     }
-    
+
     var session: AVCaptureSession
-    
+    @Binding var countdown: Int
+
     func makeUIView(context: Context) -> CameraPreview {
         let view = CameraPreview()
         view.previewLayer.session = session
@@ -42,7 +53,7 @@ struct CameraPreviewView: UIViewRepresentable {
             if session.canAddConnection(connection) {
                 session.addConnection(connection)
             }
-            
+
             do {
                 try wideAngleInput.device.lockForConfiguration()
                 wideAngleInput.device.videoZoomFactor = 1.0
@@ -54,6 +65,14 @@ struct CameraPreviewView: UIViewRepresentable {
 
         return view
     }
-    
-    func updateUIView(_ uiView: CameraPreview, context: Context) {}
+
+    func updateUIView(_ uiView: CameraPreview, context: Context) {
+        uiView.countdownLabel.text = "\(countdown)"
+        uiView.countdownLabel.alpha = countdown > 0 ? 1 : 0
+    }
+}
+
+
+#Preview {
+    ContentView()
 }

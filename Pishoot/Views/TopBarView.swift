@@ -8,29 +8,11 @@
 import SwiftUI
 
 struct TopBarView: View {
-    var toggleFlash: () -> Void
     var toggleAdditionalSettings: () -> Void
-    var isFlashOn: Bool
     var isAdditionalSettingsOpen: Bool
     
     var body: some View {
-        ZStack {
-            HStack {
-                Button(action: {
-                    withAnimation {
-                        toggleFlash()
-                    }
-                }) {
-                    Image(systemName: isFlashOn ? "bolt.fill" : "bolt.slash.fill")
-                        .foregroundColor(.white)
-                        .padding(10)
-                        .background(Color.black.opacity(0.5))
-                        .clipShape(Circle())
-                }
-                
-                Spacer()
-            }
-            
+        HStack {
             Button(action: {
                 withAnimation() {
                     toggleAdditionalSettings()
@@ -43,11 +25,10 @@ struct TopBarView: View {
                     .clipShape(Circle())
             }
         }
-        .padding()
     }
 }
 
 
 #Preview {
-    TopBarView(toggleFlash: {}, toggleAdditionalSettings: {}, isFlashOn: false, isAdditionalSettingsOpen: false)
+    TopBarView(toggleAdditionalSettings: {}, isAdditionalSettingsOpen: false)
 }

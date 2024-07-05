@@ -19,6 +19,7 @@ struct PhotoThumbnailView: View {
                 Image(uiImage: lastPhoto)
                     .resizable()
                     .frame(width: 50, height: 50)
+                    .scaledToFit()
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
