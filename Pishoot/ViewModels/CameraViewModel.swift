@@ -25,7 +25,10 @@ class CameraViewModel: NSObject, ObservableObject, AVCapturePhotoCaptureDelegate
     @Published var countdown: Int = -1
     @Published var position: CGPoint = CGPoint(x: 393.0/2, y:  852.0/2)
     private var countdownTimer: Timer?
+    @Published var lastPhotos: [UIImage] = []
     
+    let cameraManager = CameraManager()
+
     override init() {
         super.init()
         setupSession()

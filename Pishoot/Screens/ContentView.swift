@@ -86,7 +86,7 @@ struct ContentView: View {
         @unknown default:
             print("Unknown scene phase")
         }
-        .statusBar(hidden: true)
+     
     }
 }
 
