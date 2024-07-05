@@ -2,7 +2,7 @@ import SwiftUI
 import AVFoundation
 
 class CameraViewModel: ObservableObject {
-    private let cameraManager: CameraManager
+    let cameraManager: CameraManager
     
     @Published var isFlashOn = false
     @Published var isCapturingPhoto = false
@@ -23,6 +23,12 @@ class CameraViewModel: ObservableObject {
     
     init() {
         self.cameraManager = CameraManager()
+        WatchConnectivityManager.shared.takePictureOnWatch = { [weak self] in
+            self?.capturePhotos { images in
+                // Handle the captured images if needed
+            }
+        }
+        
     }
     
     func startSession() {
