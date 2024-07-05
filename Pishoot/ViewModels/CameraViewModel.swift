@@ -33,6 +33,12 @@ class CameraViewModel: ObservableObject {
     init(cameraManager: CameraManager = CameraManager.shared) {
         self.cameraManager = cameraManager
         bindCameraManager()
+        
+        WatchConnectivityManager.shared.takePictureOnWatch = { [weak self] in
+            self?.capturePhotos { images in
+                // Handle the captured images if needed
+            }
+        }
     }
     
     private func bindCameraManager() {
