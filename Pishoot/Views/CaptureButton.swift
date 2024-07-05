@@ -10,7 +10,7 @@ import SwiftUI
 struct CaptureButton: View {
     var action: () -> Void
     @Binding var isCapturing: Bool
-    @State private var animationProgress: CGFloat = 0
+    @Binding var animationProgress: CGFloat
     
     var body: some View {
         Button(action: {
@@ -32,7 +32,7 @@ struct CaptureButton: View {
                 
                 Circle()
                     .trim(from: 0, to: animationProgress)
-                    .stroke(Color.yellow, lineWidth: 10)
+                    .stroke(Color("pishootYellow"), lineWidth: 10)
                     .frame(width: 65, height: 65)
                     .rotationEffect(Angle(degrees: -90))
             }
@@ -48,5 +48,5 @@ struct CaptureButton: View {
 }
 
 #Preview {
-    CaptureButton(action: {}, isCapturing: .constant(false))
+    CaptureButton(action: {}, isCapturing: .constant(false),animationProgress: .constant(0.5))
 }

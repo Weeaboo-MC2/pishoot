@@ -27,7 +27,7 @@ struct MainAdditionalSetting: View {
                     }) {
                         Image(systemName: isFlashOn ? "bolt.fill" : "bolt.slash.fill")
                             .frame(width: 40, height: 40)
-                            .foregroundColor(isFlashOn ? .yellow : .white)
+                            .foregroundColor(isFlashOn ? Color("pishootYellow"): .white)
                             .background(Color.black.opacity(0.5))
                             .clipShape(Circle())
                     }
@@ -47,7 +47,7 @@ struct MainAdditionalSetting: View {
                         
                     }) {
                         Image(systemName: "target")
-                            .foregroundColor(.white)
+                            .foregroundColor(isMarkerOn ? Color("pishootYellow") : .white)
                             .frame(width: 40, height: 40)
                             .background(Color.black.opacity(0.5))
                             .clipShape(Circle())
@@ -58,7 +58,7 @@ struct MainAdditionalSetting: View {
                         }
                     }) {
                         Image(systemName: "timer")
-                            .foregroundColor(cameraViewModel.timerDuration == 0 ? .white : .yellow)
+                            .foregroundColor(cameraViewModel.timerDuration == 0 ? .white : Color("pishootYellow"))
                             .frame(width: 40, height: 40)
                             .background(Color.black.opacity(0.5))
                             .clipShape(Circle())
@@ -84,7 +84,7 @@ struct MainAdditionalSetting: View {
                         cameraViewModel.setZoomLevel(zoomLevel: selectedZoomLevel)
                     }) {
                         Text("0.5x")
-                            .foregroundColor(selectedZoomLevel == 0.5 ? .yellow : .white)
+                            .foregroundColor(selectedZoomLevel == 0.5 ? Color("pishootYellow") : .white)
                             .padding(10)
                     }
                     Button(action: {
@@ -92,7 +92,7 @@ struct MainAdditionalSetting: View {
                         cameraViewModel.setZoomLevel(zoomLevel: selectedZoomLevel)
                     }) {
                         Text("1x")
-                            .foregroundColor(selectedZoomLevel == 1.0 ? .yellow : .white)
+                            .foregroundColor(selectedZoomLevel == 1.0 ? Color("pishootYellow") : .white)
                             .padding(10)
                     }
                     Button(action: {
@@ -100,7 +100,7 @@ struct MainAdditionalSetting: View {
                         cameraViewModel.setZoomLevel(zoomLevel: selectedZoomLevel)
                     }) {
                         Text("2x")
-                            .foregroundColor(selectedZoomLevel == 2.0 ? .yellow : .white)
+                            .foregroundColor(selectedZoomLevel == 2.0 ? Color("pishootYellow") : .white)
                             .padding(10)
                     }
                 }
@@ -117,7 +117,7 @@ struct MainAdditionalSetting: View {
                     }
                 }) {
                     Image(systemName: "timer")
-                        .foregroundColor(cameraViewModel.timerDuration == 0 ? .white : .yellow)
+                        .foregroundColor(cameraViewModel.timerDuration == 0 ? .white : Color("pishootYellow"))
                         .padding(10)
                         .background(Color.black.opacity(0.5))
                         .clipShape(Circle())
@@ -126,21 +126,21 @@ struct MainAdditionalSetting: View {
                     cameraViewModel.timerDuration = 3
                 }) {
                     Text("3s")
-                        .foregroundColor(cameraViewModel.timerDuration == 3 ? .yellow : .white)
+                        .foregroundColor(cameraViewModel.timerDuration == 3 ? Color("pishootYellow") : .white)
                         .padding(10)
                 }
                 Button(action: {
                     cameraViewModel.timerDuration = 10
                 }) {
                     Text("10s")
-                        .foregroundColor(cameraViewModel.timerDuration == 10 ? .yellow : .white)
+                        .foregroundColor(cameraViewModel.timerDuration == 10 ? Color("pishootYellow"): .white)
                         .padding(10)
                 }
                 Button(action: {
                     cameraViewModel.timerDuration = 0
                 }) {
                     Text("Off")
-                        .foregroundColor(cameraViewModel.timerDuration == 0 ? .yellow : .white)
+                        .foregroundColor(cameraViewModel.timerDuration == 0 ? Color("pishootYellow") : .white)
                         .padding(10)
                 }
             }

@@ -20,6 +20,7 @@ struct ContentView: View {
     @State private var guideStepIndex = 0
     @State private var chevronButtonTapped = false
     
+    @State var animationProgress: CGFloat = 0
     var body: some View {
         VStack {
             TopBarView(isAdditionalSettingsOpen: $isAdditionalSettingsOpen)
@@ -31,7 +32,7 @@ struct ContentView: View {
                         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 16 / 9)
                         .clipped()
                         .overlay(
-                            BlackScreenView(progress: $cameraViewModel.captureProgress)
+                            BlackScreenView(animationProgress: $animationProgress)
                                 .opacity(cameraViewModel.isBlackScreenVisible ? 1 : 0)
                         )
                     
@@ -51,7 +52,7 @@ struct ContentView: View {
                         }, openPhotosApp: {
                             PhotoLibraryHelper.openPhotosApp()
                         },
-                                      isCapturing: $cameraViewModel.isCapturingPhoto
+                                      isCapturing: $cameraViewModel.isCapturingPhoto,animationProgress: $animationProgress
                         )
                         .padding(.bottom, 5)
                     }

@@ -4,6 +4,7 @@ struct WatchContentView: View {
     @ObservedObject var connectivityManager = WatchConnectivityManager.shared
     @Environment(\.scenePhase) private var scenePhase
     @State private var isActive = true
+    @State private var isMarkerOn = true
     
     var body: some View {
         VStack {
@@ -25,37 +26,54 @@ struct WatchContentView: View {
                                     .clipped()
                                     .rotationEffect(Angle(degrees: 90))
                                     .position(x: screenSize.width / 2, y: screenSize.height / 2)
-                                Image(systemName: "target")
-                                    .resizable()
-                                    .frame(width: 50, height: 50)
-                                    .position(connectivityManager.position)
+                                if(isMarkerOn){
+                                    Image(systemName: "target")
+                                        .resizable()
+                                        .frame(width: 50, height: 50)
+                                        .position(connectivityManager.position)
+                                }
                             }
                             .onAppear{
                                 let watchSize = ["width": Float(screenSize.width), "height": Float(screenSize.height)]
                                 connectivityManager.send(message: ["watchSize": watchSize])
                                 connectivityManager.watchScreenSize = watchSize
                             }
+                            VStack {
+                                Spacer()
+                                Button(action: {
+                                    connectivityManager.sendTakePictureCommand()
+                                }) {
+                                    Circle()
+                                        .fill(Color.white)
+                                        .frame(width: 40, height: 40)
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color.gray, lineWidth: 1)
+                                                .frame(width: 30, height: 30)
+                                        )
+                                }.buttonStyle(PlainButtonStyle())
+                                    .padding()
+                            }
                             
+                            VStack {
+                                Spacer()
+                                HStack{
+                                    Spacer()
+                                    Button(action: {
+                                        isMarkerOn.toggle()
+                                    }) {
+                                        Image(systemName: "target")
+                                            .resizable()
+                                            .frame(width: 40, height: 40)
+                                            .foregroundColor(isMarkerOn ? Color("pishootYellow") : .white)
+                                    }.buttonStyle(PlainButtonStyle())
+                                        .padding()
+                                }
+                            }
                         } else {
                             Text("Waiting for preview...")
                         }
-                        VStack {
-                            Spacer()
-                            Button(action: {
-                                print("Take picture button pressed")
-                                connectivityManager.sendTakePictureCommand()
-                            }) {
-                                Circle()
-                                    .fill(Color.white)
-                                    .frame(width: 40, height: 40)
-                                    .overlay(
-                                        Circle()
-                                            .stroke(Color.gray, lineWidth: 1)
-                                            .frame(width: 30, height: 30)
-                                    )
-                            }.buttonStyle(PlainButtonStyle())
-                                .padding()
-                        }
+                        
                     } else {
                         Text("iOS app not open")
                     }
