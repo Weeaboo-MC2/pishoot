@@ -41,10 +41,8 @@ class CameraViewModel: ObservableObject {
         bindCameraManager()
         
         WatchConnectivityManager.shared.takePictureOnWatch = { [weak self] in
-//            self?.timerDuration = 3
             self?.capturePhotos { images in
             }
-//            self?.timerDuration = 0
         }
     }
     
@@ -90,7 +88,7 @@ class CameraViewModel: ObservableObject {
     
     private func takePictures(completion: @escaping ([UIImage]) -> Void) {
         captureProgress = 0
-        withAnimation(.linear(duration: 0.5)) {
+        withAnimation(.linear(duration: 1)) {
             self.captureProgress = 1
         }
         cameraManager.capturePhotos { [weak self] images in

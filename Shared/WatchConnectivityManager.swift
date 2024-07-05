@@ -123,4 +123,11 @@ class WatchConnectivityManager: NSObject, ObservableObject, WCSessionDelegate {
         WCSession.default.activate()
     }
     #endif
+    
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+            DispatchQueue.main.async {
+                print("Received application context: \(applicationContext)")
+                // Handle the received application context data here
+            }
+        }
 }

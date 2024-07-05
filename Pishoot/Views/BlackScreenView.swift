@@ -9,28 +9,31 @@ import SwiftUI
 
 struct BlackScreenView: View {
     @Binding var progress: CGFloat
-
+    
     var body: some View {
         ZStack {
             Color.black
                 .edgesIgnoringSafeArea(.all)
-
+            
             VStack {
                 Text("Hold Still")
                     .font(.headline)
                     .foregroundColor(.white)
                     .padding(.bottom, 10)
-
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(height: 4)
-
-                    Rectangle()
-                        .fill(Color.yellow)
-                        .frame(width: UIScreen.main.bounds.width * progress, height: 4)
+                
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.3))
+                            .frame(height: 4)
+                        
+                        Rectangle()
+                            .fill(Color.yellow)
+                            .frame(width: geometry.size.width * progress, height: 4)
+                            .animation(.linear, value: progress)
+                    }
                 }
-                .frame(width: UIScreen.main.bounds.width * 0.7)
+                .frame(width: UIScreen.main.bounds.width * 0.7, height: 4)
             }
         }
     }
