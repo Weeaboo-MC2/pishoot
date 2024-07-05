@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		0F05D7012C35985400F961C7 /* BlackScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F05D7002C35985400F961C7 /* BlackScreenView.swift */; };
+		0F7399CA2C38531500324891 /* OnBoardingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399C92C38531500324891 /* OnBoardingContainerView.swift */; };
+		0F7399CC2C38534900324891 /* OnBoardingDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399CB2C38534900324891 /* OnBoardingDataModel.swift */; };
+		0F7399CE2C38536900324891 /* OnBoardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399CD2C38536900324891 /* OnBoardingView.swift */; };
+		0F7399D02C38539300324891 /* CustomLinearProgressViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399CF2C38539300324891 /* CustomLinearProgressViewStyle.swift */; };
+		0F7399D22C3853CB00324891 /* WelcomeOnBoarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399D12C3853CB00324891 /* WelcomeOnBoarding.swift */; };
 		0F8458D32C2AB4130033FED7 /* PishootApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458D22C2AB4130033FED7 /* PishootApp.swift */; };
 		0F8458D52C2AB4130033FED7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8458D42C2AB4130033FED7 /* ContentView.swift */; };
 		0F8458D72C2AB4140033FED7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F8458D62C2AB4140033FED7 /* Assets.xcassets */; };
@@ -58,6 +63,11 @@
 
 /* Begin PBXFileReference section */
 		0F05D7002C35985400F961C7 /* BlackScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackScreenView.swift; sourceTree = "<group>"; };
+		0F7399C92C38531500324891 /* OnBoardingContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingContainerView.swift; sourceTree = "<group>"; };
+		0F7399CB2C38534900324891 /* OnBoardingDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingDataModel.swift; sourceTree = "<group>"; };
+		0F7399CD2C38536900324891 /* OnBoardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingView.swift; sourceTree = "<group>"; };
+		0F7399CF2C38539300324891 /* CustomLinearProgressViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLinearProgressViewStyle.swift; sourceTree = "<group>"; };
+		0F7399D12C3853CB00324891 /* WelcomeOnBoarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeOnBoarding.swift; sourceTree = "<group>"; };
 		0F8458CF2C2AB4130033FED7 /* Pishoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pishoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F8458D22C2AB4130033FED7 /* PishootApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PishootApp.swift; sourceTree = "<group>"; };
 		0F8458D42C2AB4130033FED7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -100,6 +110,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0F7399C82C3852D700324891 /* OnBoarding */ = {
+			isa = PBXGroup;
+			children = (
+				0F7399C92C38531500324891 /* OnBoardingContainerView.swift */,
+				0F7399CB2C38534900324891 /* OnBoardingDataModel.swift */,
+				0F7399CD2C38536900324891 /* OnBoardingView.swift */,
+				0F7399CF2C38539300324891 /* CustomLinearProgressViewStyle.swift */,
+				0F7399D12C3853CB00324891 /* WelcomeOnBoarding.swift */,
+			);
+			path = OnBoarding;
+			sourceTree = "<group>";
+		};
 		0F8458C62C2AB4130033FED7 = {
 			isa = PBXGroup;
 			children = (
@@ -122,6 +144,7 @@
 		0F8458D12C2AB4130033FED7 /* Pishoot */ = {
 			isa = PBXGroup;
 			children = (
+				0F7399C82C3852D700324891 /* OnBoarding */,
 				0F8458E32C2AB7670033FED7 /* Screens */,
 				0F8458E22C2AB74D0033FED7 /* Utilities */,
 				0F8458E12C2AB7400033FED7 /* ViewModels */,
@@ -312,12 +335,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F8458D52C2AB4130033FED7 /* ContentView.swift in Sources */,
+				0F7399D22C3853CB00324891 /* WelcomeOnBoarding.swift in Sources */,
 				0F8458D32C2AB4130033FED7 /* PishootApp.swift in Sources */,
+				0F7399CC2C38534900324891 /* OnBoardingDataModel.swift in Sources */,
 				0F8458F52C2BB7AB0033FED7 /* MainAdditionalSetting.swift in Sources */,
 				0F8458E92C2AB9170033FED7 /* CameraPreviewView.swift in Sources */,
+				0F7399D02C38539300324891 /* CustomLinearProgressViewStyle.swift in Sources */,
 				0F8458EF2C2ABA2C0033FED7 /* BottomBarView.swift in Sources */,
 				279E1D9F2C36E21D0078C2A1 /* Marker.swift in Sources */,
+				0F7399CA2C38531500324891 /* OnBoardingContainerView.swift in Sources */,
 				0F8458E72C2AB8CD0033FED7 /* PhotoLibraryHelper.swift in Sources */,
+				0F7399CE2C38536900324891 /* OnBoardingView.swift in Sources */,
 				0F8458ED2C2AB9C20033FED7 /* TopBarView.swift in Sources */,
 				0F8458F12C2ABA8C0033FED7 /* PhotoThumbnailView.swift in Sources */,
 				0F05D7012C35985400F961C7 /* BlackScreenView.swift in Sources */,
