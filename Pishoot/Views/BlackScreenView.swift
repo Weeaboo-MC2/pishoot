@@ -28,7 +28,7 @@ struct BlackScreenView: View {
                             .frame(height: 4)
                         
                         Rectangle()
-                            .fill(Color.yellow)
+                            .fill(Color("pishootYellow"))
                             .frame(width: geometry.size.width * progress, height: 4)
                             .animation(.linear, value: progress)
                     }
