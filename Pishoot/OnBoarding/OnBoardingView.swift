@@ -65,13 +65,13 @@ struct OnBoardingView: View {
                                 .fontWeight(.bold)
                                 .multilineTextAlignment(.center)
                                 .foregroundColor(Color(red: 0.95, green: 0.86, blue: 0.04))
-                                .onTapGesture {
-                                    onBack()
-                                }
                         }
                         .padding(10)
                         .frame(width: 103, alignment: .center)
                         .cornerRadius(9)
+                        .onTapGesture {
+                            onBack()
+                        }
                     }
                     
                     VStack(alignment: .center, spacing: 10) {
@@ -80,14 +80,14 @@ struct OnBoardingView: View {
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
                             .foregroundColor(.black)
-                            .onTapGesture {
-                                onContinue()
-                            }
                     }
                     .padding(10)
                     .frame(width: isLastStep ? 310 : 207, alignment: .center)
                     .background(Color(red: 0.95, green: 0.86, blue: 0.04))
                     .cornerRadius(9)
+                    .onTapGesture {
+                        onContinue()
+                    }
                 }
                 .padding(0)
                 .frame(maxWidth: .infinity, alignment: .leading)

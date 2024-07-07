@@ -72,14 +72,14 @@ struct WelcomeOnBoarding: View {
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
                             .foregroundColor(Color(red: 0.95, green: 0.86, blue: 0.04))
-                            .onTapGesture {
-                                onContinue()
-                            }
                     }
                     .padding(10)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .background(Color(red: 0.19, green: 0.19, blue: 0.19))
                     .cornerRadius(9)
+                    .onTapGesture {
+                        onContinue()
+                    }
                 }
                 .padding(0)
                 .frame(width: 310, alignment: .topLeading)
