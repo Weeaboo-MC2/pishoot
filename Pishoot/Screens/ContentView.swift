@@ -40,7 +40,7 @@ struct ContentView: View {
                         Spacer()
                         
                         if isAdditionalSettingsOpen {
-                            MainAdditionalSetting(selectedZoomLevel: $cameraViewModel.selectedZoomLevel, isMarkerOn: $isMarkerOn, toggleFlash: {
+                            MainAdditionalSetting(selectedZoomLevel: $cameraViewModel.selectedZoomLevel, isMarkerOn: $isMarkerOn, isMultiRatio: $cameraViewModel.isMultiRatio, toggleFlash: {
                                 cameraViewModel.toggleFlash()
                             }, isFlashOn: cameraViewModel.isFlashOn, cameraViewModel: cameraViewModel)
                         }

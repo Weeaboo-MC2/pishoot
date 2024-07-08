@@ -16,6 +16,7 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     @Published var isFlashOn: Bool = false
     @Published var isCapturingPhoto: Bool = false
     @Published var isBlackScreenVisible: Bool = false
+    @Published var isMultiRatio: Bool = false
     
     private var capturedImages: [UIImage] = []
     private var completion: (([UIImage]) -> Void)?
@@ -208,16 +209,24 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
                         self.capturedImages.append(image)
                         
                         if self.capturedImages.count == 2 {
-                            print("captured 2 images")
                             self.captureZoomedPhotos()
                         }
                         
                         if self.capturedImages.count == 3 {
                             self.backToNormalLens()
-                            print("captured 3 images")
-                            self.completion?(self.capturedImages)
-                            self.completion = nil
-                            self.isCapturingPhoto = false
+                            if self.isMultiRatio {
+                                self.processImagesInBackground(self.capturedImages) { processedImages in
+                                    self.saveImagesToPhotoLibrary(images: processedImages)
+                                    self.completion?(processedImages)
+                                    self.completion = nil
+                                    self.isCapturingPhoto = false
+                                }
+                            } else {
+                                self.completion?(self.capturedImages)
+                                self.completion = nil
+                                self.isCapturingPhoto = false
+                            }
+                            
                         }
                     } else {
                         print("Photo library access not authorized")
@@ -231,6 +240,72 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         }
     }
     
+    private func processImagesInBackground(_ images: [UIImage], completion: @escaping ([UIImage]) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            var processedImages: [UIImage] = []
+            
+            for image in images {
+                processedImages.append(contentsOf: self.generateMultiRatios(for: image))
+            }
+            
+            DispatchQueue.main.async {
+                completion(processedImages)
+            }
+        }
+    }
+    
+    private func generateMultiRatios(for image: UIImage) -> [UIImage] {
+        let aspectRatios: [CGFloat] = [3.0 / 4.0, 1.0]
+        var croppedImages: [UIImage] = []
+        
+        for aspectRatio in aspectRatios {
+            if let croppedImage = cropImage(image, toAspectRatio: aspectRatio) {
+                croppedImages.append(croppedImage)
+            }
+        }
+        
+        return croppedImages
+    }
+    
+    private func cropImage(_ image: UIImage, toAspectRatio aspectRatio: CGFloat) -> UIImage? {
+        // First, fix the image orientation
+        let fixedImage = image.fixOrientation()
+        
+        let originalSize = fixedImage.size
+        
+        var cropRect: CGRect
+        let newHeight: CGFloat
+        
+        if aspectRatio == 3.0 / 4.0 {
+            newHeight = originalSize.width * (4.0 / 3.0)
+        } else if aspectRatio == 1.0 {
+            newHeight = originalSize.width
+        } else {
+            return nil // Return nil for any other aspect ratio
+        }
+        
+        // If the image is already shorter than the desired ratio, return the original image
+        if newHeight > originalSize.height {
+            return fixedImage
+        }
+        
+        let yOffset = (originalSize.height - newHeight) / 2
+        cropRect = CGRect(x: 0, y: yOffset, width: originalSize.width, height: newHeight)
+        
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: cropRect.width, height: cropRect.height), false, fixedImage.scale)
+        fixedImage.draw(at: CGPoint(x: -cropRect.origin.x, y: -cropRect.origin.y))
+        let croppedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return croppedImage
+    }
+    
+    private func saveImagesToPhotoLibrary(images: [UIImage]) {
+        for image in images {
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        }
+    }
+    
     func backToNormalLens() {
         if selectedZoomLevel == 0.5 {
             switchToUltraWideCamera()
@@ -241,7 +316,6 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         // Delay hiding the black screen and turning off the torch
         self.isBlackScreenVisible = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-    
             if self.isFlashOn {
                 self.turnTorch(on: false)
             }
@@ -285,3 +359,20 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         }
     }
 }
+
+// Add this extension to UIImage
+extension UIImage {
+    func fixOrientation() -> UIImage {
+        if self.imageOrientation == .up {
+            return self
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(self.size, false, self.scale)
+        self.draw(in: CGRect(origin: .zero, size: self.size))
+        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return normalizedImage ?? self
+    }
+}
+

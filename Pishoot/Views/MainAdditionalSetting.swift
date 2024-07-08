@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct MainAdditionalSetting: View {
-    @State private var isZoomOptionsVisible: Bool = true
+    @State private var isZoomOptionsVisible: Bool = false
     @State private var isTimerOptionsVisible: Bool = false
     @Binding var selectedZoomLevel: CGFloat
     @Binding var isMarkerOn: Bool
+    @Binding var isMultiRatio: Bool
     var toggleFlash: () -> Void
     var isFlashOn: Bool
     var cameraViewModel: CameraViewModel
@@ -59,6 +60,16 @@ struct MainAdditionalSetting: View {
                     }) {
                         Image(systemName: "timer")
                             .foregroundColor(cameraViewModel.timerDuration == 0 ? .white : Color("pishootYellow"))
+                            .frame(width: 40, height: 40)
+                            .background(Color.black.opacity(0.5))
+                            .clipShape(Circle())
+                    }
+                    Button(action: {
+                        isMultiRatio.toggle()
+                        
+                    }) {
+                        Image(systemName: "rectangle.stack.fill")
+                            .foregroundColor(isMultiRatio ? Color("pishootYellow") : .white)
                             .frame(width: 40, height: 40)
                             .background(Color.black.opacity(0.5))
                             .clipShape(Circle())
@@ -154,5 +165,5 @@ struct MainAdditionalSetting: View {
 
 
 #Preview {
-    MainAdditionalSetting(selectedZoomLevel: Binding<CGFloat>(get: { 1.0 }, set: { _ in }), isMarkerOn:.constant(false), toggleFlash: {}, isFlashOn: true, cameraViewModel: CameraViewModel())
+    MainAdditionalSetting(selectedZoomLevel: Binding<CGFloat>(get: { 1.0 }, set: { _ in }), isMarkerOn:.constant(false), isMultiRatio: .constant(false), toggleFlash: {}, isFlashOn: true, cameraViewModel: CameraViewModel())
 }
