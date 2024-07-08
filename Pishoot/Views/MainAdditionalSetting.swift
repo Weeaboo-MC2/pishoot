@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MainAdditionalSetting: View {
-    @State private var isZoomOptionsVisible: Bool = false
+    @State private var isZoomOptionsVisible: Bool = true
     @State private var isTimerOptionsVisible: Bool = false
     @Binding var selectedZoomLevel: CGFloat
     @Binding var isMarkerOn: Bool
@@ -104,6 +104,7 @@ struct MainAdditionalSetting: View {
                             .padding(10)
                     }
                 }
+                .padding(.trailing, 20)
                 .background(Color.black.opacity(0.5))
                 .clipShape(RoundedRectangle(cornerRadius: 20))
             }
@@ -144,6 +145,7 @@ struct MainAdditionalSetting: View {
                         .padding(10)
                 }
             }
+            .padding(.trailing, 20)
             .background(Color.black.opacity(0.5))
             .clipShape(RoundedRectangle(cornerRadius: 20))
         }

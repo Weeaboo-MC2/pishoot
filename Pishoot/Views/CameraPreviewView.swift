@@ -12,20 +12,31 @@ struct CameraPreviewView: UIViewRepresentable {
     class CameraPreview: UIView {
         var previewLayer: AVCaptureVideoPreviewLayer
         var countdownLabel: UILabel
+        var session: AVCaptureSession
+        var focusBox: UIView
 
         override init(frame: CGRect) {
             previewLayer = AVCaptureVideoPreviewLayer()
-            
             countdownLabel = UILabel()
-            
             countdownLabel.textAlignment = .center
             countdownLabel.textColor = .white
             countdownLabel.font = UIFont.systemFont(ofSize: 100, weight: .bold)
             countdownLabel.alpha = 0
+            session = AVCaptureSession()
+            focusBox = UIView()
 
             super.init(frame: frame)
             layer.addSublayer(previewLayer)
             addSubview(countdownLabel)
+
+            focusBox.layer.borderColor = UIColor.yellow.cgColor
+            focusBox.layer.borderWidth = 2
+            focusBox.frame = CGRect(x: 0, y: 0, width: 80, height: 80)
+            focusBox.isHidden = true
+            addSubview(focusBox)
+
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(focusAndExposeTap(_:)))
+            self.addGestureRecognizer(tapGestureRecognizer)
         }
 
         required init?(coder: NSCoder) {
@@ -36,6 +47,48 @@ struct CameraPreviewView: UIViewRepresentable {
             super.layoutSubviews()
             previewLayer.frame = bounds
             countdownLabel.frame = bounds
+        }
+
+        @objc func focusAndExposeTap(_ gestureRecognizer: UITapGestureRecognizer) {
+            let layerPoint = gestureRecognizer.location(in: gestureRecognizer.view)
+            let devicePoint = previewLayer.captureDevicePointConverted(fromLayerPoint: layerPoint)
+            showFocusBox(at: layerPoint)
+            focus(with: .autoFocus, exposureMode: .autoExpose, at: devicePoint)
+        }
+
+        private func showFocusBox(at point: CGPoint) {
+            focusBox.center = point
+            focusBox.isHidden = false
+            focusBox.alpha = 1.0
+
+            UIView.animate(withDuration: 1, animations: {
+                self.focusBox.alpha = 0.0
+            }) { _ in
+                self.focusBox.isHidden = true
+            }
+        }
+
+        private func focus(with focusMode: AVCaptureDevice.FocusMode, exposureMode: AVCaptureDevice.ExposureMode, at devicePoint: CGPoint) {
+            guard let device = previewLayer.session?.inputs.first(where: { ($0 as? AVCaptureDeviceInput)?.device.deviceType == .builtInWideAngleCamera }) as? AVCaptureDeviceInput else { return }
+
+            do {
+                try device.device.lockForConfiguration()
+
+                if device.device.isFocusPointOfInterestSupported && device.device.isFocusModeSupported(focusMode) {
+                    device.device.focusPointOfInterest = devicePoint
+                    device.device.focusMode = focusMode
+                }
+
+                if device.device.isExposurePointOfInterestSupported && device.device.isExposureModeSupported(exposureMode) {
+                    device.device.exposurePointOfInterest = devicePoint
+                    device.device.exposureMode = exposureMode
+                }
+
+                device.device.isSubjectAreaChangeMonitoringEnabled = true
+                device.device.unlockForConfiguration()
+            } catch {
+                print("Error focusing on point: \(error)")
+            }
         }
     }
 
