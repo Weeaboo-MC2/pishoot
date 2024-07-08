@@ -113,7 +113,7 @@ struct GuideView: View {
             isAdditionalSettingsOpen = true
         } else if currentStepIndex == 1 {
             isMarkerOn = true
-        } else if currentStepIndex == 2 {
+        } else if currentStepIndex == 4 {
             isAdditionalSettingsOpen = false
             isMarkerOn = false
             UserDefaults.standard.set(true, forKey: "hasSeenGuide")

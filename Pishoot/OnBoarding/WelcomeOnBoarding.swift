@@ -9,7 +9,7 @@ import SwiftUI
 
 struct WelcomeOnBoarding: View {
     @State private var animate = false
-    @State private var progress: Float = 0.25
+    @State private var progress: Float = 0.20
     var onContinue: () -> Void
     
     var body: some View {
