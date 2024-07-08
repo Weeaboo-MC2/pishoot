@@ -11,7 +11,7 @@ import Combine
 class CameraViewModel: ObservableObject {
     private var cameraManager: CameraManager
     private var cancellables = Set<AnyCancellable>()
-    
+
     @Published var isFlashOn = false {
         didSet {
             cameraManager.isFlashOn = isFlashOn
@@ -29,53 +29,62 @@ class CameraViewModel: ObservableObject {
     @Published var countdown: Int = -1
     @Published var position: CGPoint = CGPoint(x: 393.0 / 2, y: 852.0 / 2)
     @Published var lastPhotos: [UIImage] = []
+    @Published var isMultiRatio: Bool = false {
+        didSet {
+            cameraManager.isMultiRatio = isMultiRatio
+        }
+    }
     
+
     private var countdownTimer: Timer?
-    
+
     var session: AVCaptureMultiCamSession? {
         cameraManager.session
     }
-    
+
     init(cameraManager: CameraManager = CameraManager.shared) {
         self.cameraManager = cameraManager
         bindCameraManager()
-        
+
         WatchConnectivityManager.shared.takePictureOnWatch = { [weak self] in
             self?.capturePhotos { images in
             }
         }
     }
-    
+
     private func bindCameraManager() {
         cameraManager.$isFlashOn
             .receive(on: DispatchQueue.main)
             .assign(to: &$isFlashOn)
-        
+
         cameraManager.$isCapturingPhoto
             .receive(on: DispatchQueue.main)
             .assign(to: &$isCapturingPhoto)
-        
+
         cameraManager.$selectedZoomLevel
             .receive(on: DispatchQueue.main)
             .assign(to: &$selectedZoomLevel)
-        
+
         cameraManager.$isBlackScreenVisible
             .receive(on: DispatchQueue.main)
             .assign(to: &$isBlackScreenVisible)
+        cameraManager.$isMultiRatio
+            .receive(on: DispatchQueue.main)
+            .assign(to: &$isMultiRatio)
     }
-    
+
     func startSession() {
         cameraManager.startSession()
     }
-    
+
     func stopSession() {
         cameraManager.stopSession()
     }
-    
+
     func toggleFlash() {
         isFlashOn.toggle()
     }
-    
+
     func capturePhotos(completion: @escaping ([UIImage]) -> Void) {
         if timerDuration > 0 {
             startCountdownTimer {
@@ -85,7 +94,7 @@ class CameraViewModel: ObservableObject {
             takePictures(completion: completion)
         }
     }
-    
+
     private func takePictures(completion: @escaping ([UIImage]) -> Void) {
         captureProgress = 0
         withAnimation(.linear(duration: 1)) {
@@ -96,7 +105,7 @@ class CameraViewModel: ObservableObject {
             completion(images)
         }
     }
-    
+
     private func startCountdownTimer(completion: @escaping () -> Void) {
         countdown = timerDuration
         flashCountdown()
@@ -112,14 +121,14 @@ class CameraViewModel: ObservableObject {
             }
         }
     }
-    
+
     private func flashCountdown() {
         turnTorch(on: true)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.turnTorch(on: false)
         }
     }
-    
+
     func turnTorch(on: Bool) {
         guard let device = AVCaptureDevice.default(for: .video), device.hasTorch else { return }
         do {
@@ -133,7 +142,7 @@ class CameraViewModel: ObservableObject {
             print("Torch could not be used: \(error)")
         }
     }
-    
+
     func setZoomLevel(zoomLevel: CGFloat) {
         cameraManager.setZoomLevel(zoomLevel: zoomLevel)
     }
