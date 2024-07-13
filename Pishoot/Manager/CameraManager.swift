@@ -11,6 +11,9 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     private var wideAngleCamera: AVCaptureDevice?
     private var ultraWideCamera: AVCaptureDevice?
     
+    private var captureOrientation: UIDeviceOrientation = .portrait
+    private let orientationManager = DeviceOrientationManager.shared
+    
     private var videoDataOutput: AVCaptureVideoDataOutput?
     @Published var selectedZoomLevel: CGFloat = 1.0
     @Published var isFlashOn: Bool = false
@@ -106,6 +109,8 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         
         let photoSettings = AVCapturePhotoSettings()
         
+        captureOrientation = DeviceOrientationManager.shared.currentOrientation
+        
         guard let wideAngleCamera = wideAngleCamera else { return }
         do {
             if wideAngleCamera.videoZoomFactor != 1.0 {
@@ -199,7 +204,9 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
             }
             
             guard let imageData = photo.fileDataRepresentation(),
-                  let image = UIImage(data: imageData) else { return }
+                  var image = UIImage(data: imageData) else { return }
+            
+            image = self.rotateImage(image, orientation: self.captureOrientation)
             
             PhotoLibraryHelper.requestPhotoLibraryPermission { [weak self] authorized in
                 guard let self = self else { return }
@@ -281,10 +288,9 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         } else if aspectRatio == 1.0 {
             newHeight = originalSize.width
         } else {
-            return nil // Return nil for any other aspect ratio
+            return nil
         }
         
-        // If the image is already shorter than the desired ratio, return the original image
         if newHeight > originalSize.height {
             return fixedImage
         }
@@ -358,9 +364,45 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
             print("Torch could not be used: \(error)")
         }
     }
+    
+    private func rotateImage(_ image: UIImage, orientation: UIDeviceOrientation) -> UIImage {
+        var rotationAngle: CGFloat = 0
+        var newSize: CGSize = image.size
+        
+        switch orientation {
+        case .landscapeLeft:
+            rotationAngle = -CGFloat.pi / 2
+            newSize = CGSize(width: image.size.height, height: image.size.width)
+        case .landscapeRight:
+            rotationAngle = CGFloat.pi / 2
+            newSize = CGSize(width: image.size.height, height: image.size.width)
+        case .portraitUpsideDown:
+            rotationAngle = CGFloat.pi
+        default:
+            return image
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, image.scale)
+        let context = UIGraphicsGetCurrentContext()!
+        
+        if orientation == .portraitUpsideDown {
+            context.translateBy(x: newSize.width / 2, y: newSize.height / 2)
+            context.rotate(by: rotationAngle)
+            context.translateBy(x: -newSize.width / 2, y: -newSize.height / 2)
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+        } else {
+            context.translateBy(x: newSize.width / 2, y: newSize.height / 2)
+            context.rotate(by: rotationAngle)
+            image.draw(in: CGRect(x: -image.size.width / 2, y: -image.size.height / 2, width: image.size.width, height: image.size.height))
+        }
+        
+        let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        
+        return rotatedImage
+    }
 }
 
-// Add this extension to UIImage
 extension UIImage {
     func fixOrientation() -> UIImage {
         if self.imageOrientation == .up {
