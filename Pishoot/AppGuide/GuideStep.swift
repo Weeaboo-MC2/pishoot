@@ -7,11 +7,6 @@
 
 import SwiftUI
 
-enum ArrowPosition {
-    case top
-    case bottom
-}
-
 struct GuideStep {
     let id: String
     let message: String
@@ -21,4 +16,8 @@ struct GuideStep {
     let popUpY: CGFloat
     let arrowX: CGFloat
     let arrowY: CGFloat
+    
+    enum ArrowPosition {
+        case top, bottom
+    }
 }

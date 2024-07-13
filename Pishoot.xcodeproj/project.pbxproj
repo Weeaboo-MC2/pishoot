@@ -11,7 +11,6 @@
 		0F7399CA2C38531500324891 /* OnBoardingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399C92C38531500324891 /* OnBoardingContainerView.swift */; };
 		0F7399CC2C38534900324891 /* OnBoardingDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399CB2C38534900324891 /* OnBoardingDataModel.swift */; };
 		0F7399CE2C38536900324891 /* OnBoardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399CD2C38536900324891 /* OnBoardingView.swift */; };
-		0F7399D02C38539300324891 /* CustomLinearProgressViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399CF2C38539300324891 /* CustomLinearProgressViewStyle.swift */; };
 		0F7399D22C3853CB00324891 /* WelcomeOnBoarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399D12C3853CB00324891 /* WelcomeOnBoarding.swift */; };
 		0F7399D72C38615C00324891 /* ArrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399D62C38615C00324891 /* ArrowView.swift */; };
 		0F7399D92C3861BF00324891 /* GuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399D82C3861BF00324891 /* GuideView.swift */; };
@@ -74,7 +73,6 @@
 		0F7399C92C38531500324891 /* OnBoardingContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingContainerView.swift; sourceTree = "<group>"; };
 		0F7399CB2C38534900324891 /* OnBoardingDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingDataModel.swift; sourceTree = "<group>"; };
 		0F7399CD2C38536900324891 /* OnBoardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingView.swift; sourceTree = "<group>"; };
-		0F7399CF2C38539300324891 /* CustomLinearProgressViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLinearProgressViewStyle.swift; sourceTree = "<group>"; };
 		0F7399D12C3853CB00324891 /* WelcomeOnBoarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeOnBoarding.swift; sourceTree = "<group>"; };
 		0F7399D62C38615C00324891 /* ArrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowView.swift; sourceTree = "<group>"; };
 		0F7399D82C3861BF00324891 /* GuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideView.swift; sourceTree = "<group>"; };
@@ -131,7 +129,6 @@
 				0F7399C92C38531500324891 /* OnBoardingContainerView.swift */,
 				0F7399CB2C38534900324891 /* OnBoardingDataModel.swift */,
 				0F7399CD2C38536900324891 /* OnBoardingView.swift */,
-				0F7399CF2C38539300324891 /* CustomLinearProgressViewStyle.swift */,
 				0F7399D12C3853CB00324891 /* WelcomeOnBoarding.swift */,
 			);
 			path = OnBoarding;
@@ -371,7 +368,6 @@
 				0F7399CC2C38534900324891 /* OnBoardingDataModel.swift in Sources */,
 				0F8458F52C2BB7AB0033FED7 /* MainAdditionalSetting.swift in Sources */,
 				0F8458E92C2AB9170033FED7 /* CameraPreviewView.swift in Sources */,
-				0F7399D02C38539300324891 /* CustomLinearProgressViewStyle.swift in Sources */,
 				0F8458EF2C2ABA2C0033FED7 /* BottomBarView.swift in Sources */,
 				0F7399DB2C3862BB00324891 /* GuideStep.swift in Sources */,
 				279E1D9F2C36E21D0078C2A1 /* Marker.swift in Sources */,

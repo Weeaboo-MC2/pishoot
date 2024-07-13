@@ -57,14 +57,12 @@ struct WelcomeOnBoarding: View {
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                     .padding(0)
-                    .frame(width: 267, alignment: .topLeading)
                     
                     ProgressView(value: progress)
-                        .progressViewStyle(CustomLinearProgressViewStyle(
-                            trackColor: Color(red: 0.6, green: 0.58, blue: 0),
-                            progressColor: Color(red: 0.3, green: 0.29, blue: 0)
-                        ))
-                        .frame(width: 200, height: 5)
+                        .progressViewStyle(.linear)
+                        .tint(.black)
+                        .background(Color(red: 0.6, green: 0.58, blue: 0))
+                        
                     
                     VStack(alignment: .center, spacing: 10) {
                         Text("Continue")

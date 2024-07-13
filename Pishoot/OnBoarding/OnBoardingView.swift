@@ -30,10 +30,8 @@ struct OnBoardingView: View {
                                     .clipped()
                             )
                     }
-                    .frame(width: 393, height: 444)
                     .background(Color(red: 0.95, green: 0.86, blue: 0.04))
                 }
-                .frame(width: 393, height: 444)
                 
                 VStack(alignment: .leading, spacing: 38) {
                     VStack(alignment: .leading, spacing: 10) {
@@ -49,14 +47,12 @@ struct OnBoardingView: View {
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                     .padding(0)
-                    .frame(width: 299.5, alignment: .topLeading)
                     
-                    ProgressView(value: data.progress)
-                        .progressViewStyle(CustomLinearProgressViewStyle(
-                            trackColor: Color(red: 0.8, green: 0.8, blue: 0.8),
-                            progressColor: Color(red: 0.84, green: 0.81, blue: 0)
-                        ))
-                        .frame(width: 200, height: 5)
+                    
+                    ProgressView(value: data.progress, total: 1)
+                        .progressViewStyle(.linear)
+                        .tint(Color("pishootYellow"))
+                        .background(.black)
                     
                     HStack(alignment: .center, spacing: 3) {
                         if !isLastStep {
@@ -83,7 +79,7 @@ struct OnBoardingView: View {
                                 .foregroundColor(.black)
                         }
                         .padding(10)
-                        .frame(width: isLastStep ? 310 : 207, alignment: .center)
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .background(Color(red: 0.95, green: 0.86, blue: 0.04))
                         .cornerRadius(9)
                         .onTapGesture {
@@ -93,12 +89,11 @@ struct OnBoardingView: View {
                     .padding(0)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.top, 37)
-                .frame(width: 313, alignment: .topLeading)
+                .padding(37)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
                 
                 Spacer()
             }
-            .frame(width: 393, height: 852)
             .background(Color(red: 0.19, green: 0.19, blue: 0.19))
             .gesture(
                 DragGesture()
