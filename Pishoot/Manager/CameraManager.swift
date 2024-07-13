@@ -204,15 +204,12 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
             }
             
             guard let imageData = photo.fileDataRepresentation(),
-                  var image = UIImage(data: imageData) else { return }
-            
-            image = self.rotateImage(image, orientation: self.captureOrientation)
+                  let image = UIImage(data: imageData) else { return }
             
             PhotoLibraryHelper.requestPhotoLibraryPermission { [weak self] authorized in
                 guard let self = self else { return }
                 DispatchQueue.main.async {
                     if authorized {
-                        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
                         self.capturedImages.append(image)
                         
                         if self.capturedImages.count == 2 {
@@ -221,19 +218,7 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
                         
                         if self.capturedImages.count == 3 {
                             self.backToNormalLens()
-                            if self.isMultiRatio {
-                                self.processImagesInBackground(self.capturedImages) { processedImages in
-                                    self.saveImagesToPhotoLibrary(images: processedImages)
-                                    self.completion?(processedImages)
-                                    self.completion = nil
-                                    self.isCapturingPhoto = false
-                                }
-                            } else {
-                                self.completion?(self.capturedImages)
-                                self.completion = nil
-                                self.isCapturingPhoto = false
-                            }
-                            
+                            self.processAndSaveImages()
                         }
                     } else {
                         print("Photo library access not authorized")
@@ -244,6 +229,26 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
                     }
                 }
             }
+        }
+    }
+    
+    private func processAndSaveImages() {
+        if self.isMultiRatio {
+            let rotatedImages = self.capturedImages.map { self.rotateImage($0, orientation: self.captureOrientation) }
+            self.saveImagesToPhotoLibrary(images: rotatedImages)
+            self.processImagesInBackground(self.capturedImages) { processedImages in
+                let rotatedImages = processedImages.map { self.rotateImage($0, orientation: self.captureOrientation) }
+                self.saveImagesToPhotoLibrary(images: rotatedImages)
+                self.completion?(rotatedImages)
+                self.completion = nil
+                self.isCapturingPhoto = false
+            }
+        } else {
+            let rotatedImages = self.capturedImages.map { self.rotateImage($0, orientation: self.captureOrientation) }
+            self.saveImagesToPhotoLibrary(images: rotatedImages)
+            self.completion?(rotatedImages)
+            self.completion = nil
+            self.isCapturingPhoto = false
         }
     }
     
@@ -275,7 +280,6 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     }
     
     private func cropImage(_ image: UIImage, toAspectRatio aspectRatio: CGFloat) -> UIImage? {
-        // First, fix the image orientation
         let fixedImage = image.fixOrientation()
         
         let originalSize = fixedImage.size
@@ -319,7 +323,6 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
             switchToWideAngleCamera(zoomLevel: selectedZoomLevel)
         }
         
-        // Delay hiding the black screen and turning off the torch
         self.isBlackScreenVisible = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             if self.isFlashOn {
