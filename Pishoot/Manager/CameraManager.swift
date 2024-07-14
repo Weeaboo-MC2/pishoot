@@ -11,6 +11,9 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     private var wideAngleCamera: AVCaptureDevice?
     private var ultraWideCamera: AVCaptureDevice?
     
+    private var captureOrientation: UIDeviceOrientation = .portrait
+    private let orientationManager = DeviceOrientationManager.shared
+    
     private var videoDataOutput: AVCaptureVideoDataOutput?
     @Published var selectedZoomLevel: CGFloat = 1.0
     @Published var isFlashOn: Bool = false
@@ -105,6 +108,8 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         self.completion = completion
         
         let photoSettings = AVCapturePhotoSettings()
+        
+        captureOrientation = DeviceOrientationManager.shared.currentOrientation
         
         guard let wideAngleCamera = wideAngleCamera else { return }
         do {
@@ -205,7 +210,6 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
                 guard let self = self else { return }
                 DispatchQueue.main.async {
                     if authorized {
-                        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
                         self.capturedImages.append(image)
                         
                         if self.capturedImages.count == 2 {
@@ -214,19 +218,7 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
                         
                         if self.capturedImages.count == 3 {
                             self.backToNormalLens()
-                            if self.isMultiRatio {
-                                self.processImagesInBackground(self.capturedImages) { processedImages in
-                                    self.saveImagesToPhotoLibrary(images: processedImages)
-                                    self.completion?(processedImages)
-                                    self.completion = nil
-                                    self.isCapturingPhoto = false
-                                }
-                            } else {
-                                self.completion?(self.capturedImages)
-                                self.completion = nil
-                                self.isCapturingPhoto = false
-                            }
-                            
+                            self.processAndSaveImages()
                         }
                     } else {
                         print("Photo library access not authorized")
@@ -237,6 +229,26 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
                     }
                 }
             }
+        }
+    }
+    
+    private func processAndSaveImages() {
+        if self.isMultiRatio {
+            let rotatedImages = self.capturedImages.map { self.rotateImage($0, orientation: self.captureOrientation) }
+            self.saveImagesToPhotoLibrary(images: rotatedImages)
+            self.processImagesInBackground(self.capturedImages) { processedImages in
+                let rotatedImages = processedImages.map { self.rotateImage($0, orientation: self.captureOrientation) }
+                self.saveImagesToPhotoLibrary(images: rotatedImages)
+                self.completion?(rotatedImages)
+                self.completion = nil
+                self.isCapturingPhoto = false
+            }
+        } else {
+            let rotatedImages = self.capturedImages.map { self.rotateImage($0, orientation: self.captureOrientation) }
+            self.saveImagesToPhotoLibrary(images: rotatedImages)
+            self.completion?(rotatedImages)
+            self.completion = nil
+            self.isCapturingPhoto = false
         }
     }
     
@@ -268,7 +280,6 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     }
     
     private func cropImage(_ image: UIImage, toAspectRatio aspectRatio: CGFloat) -> UIImage? {
-        // First, fix the image orientation
         let fixedImage = image.fixOrientation()
         
         let originalSize = fixedImage.size
@@ -281,10 +292,9 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         } else if aspectRatio == 1.0 {
             newHeight = originalSize.width
         } else {
-            return nil // Return nil for any other aspect ratio
+            return nil
         }
         
-        // If the image is already shorter than the desired ratio, return the original image
         if newHeight > originalSize.height {
             return fixedImage
         }
@@ -313,7 +323,6 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
             switchToWideAngleCamera(zoomLevel: selectedZoomLevel)
         }
         
-        // Delay hiding the black screen and turning off the torch
         self.isBlackScreenVisible = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             if self.isFlashOn {
@@ -358,9 +367,45 @@ class CameraManager: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
             print("Torch could not be used: \(error)")
         }
     }
+    
+    private func rotateImage(_ image: UIImage, orientation: UIDeviceOrientation) -> UIImage {
+        var rotationAngle: CGFloat = 0
+        var newSize: CGSize = image.size
+        
+        switch orientation {
+        case .landscapeLeft:
+            rotationAngle = -CGFloat.pi / 2
+            newSize = CGSize(width: image.size.height, height: image.size.width)
+        case .landscapeRight:
+            rotationAngle = CGFloat.pi / 2
+            newSize = CGSize(width: image.size.height, height: image.size.width)
+        case .portraitUpsideDown:
+            rotationAngle = CGFloat.pi
+        default:
+            return image
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, image.scale)
+        let context = UIGraphicsGetCurrentContext()!
+        
+        if orientation == .portraitUpsideDown {
+            context.translateBy(x: newSize.width / 2, y: newSize.height / 2)
+            context.rotate(by: rotationAngle)
+            context.translateBy(x: -newSize.width / 2, y: -newSize.height / 2)
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+        } else {
+            context.translateBy(x: newSize.width / 2, y: newSize.height / 2)
+            context.rotate(by: rotationAngle)
+            image.draw(in: CGRect(x: -image.size.width / 2, y: -image.size.height / 2, width: image.size.width, height: image.size.height))
+        }
+        
+        let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        
+        return rotatedImage
+    }
 }
 
-// Add this extension to UIImage
 extension UIImage {
     func fixOrientation() -> UIImage {
         if self.imageOrientation == .up {

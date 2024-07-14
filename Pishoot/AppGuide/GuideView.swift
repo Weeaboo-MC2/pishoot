@@ -16,97 +16,73 @@ struct GuideView: View {
     let steps: [GuideStep]
     
     var body: some View {
-        if currentStepIndex == 2 {
-            ZStack {
-                VStack {
-                    if steps[currentStepIndex].arrowPosition == .top {
-                        VStack {
-                            ArrowView()
-                                .frame(width: 30, height: 30)
-                                .rotationEffect(.degrees(0))
-                                .position(x: steps[currentStepIndex].arrowX, y: steps[currentStepIndex].arrowY)
+        GeometryReader { geometry in
+                    if currentStepIndex < steps.count {
+                        ZStack {
+                            if currentStepIndex != 2 {
+                                Color.black.opacity(0.3).edgesIgnoringSafeArea(.all)
+                            }
                             
-                            GuidePopUpView(step: steps[currentStepIndex])
-                                .padding(.bottom, 10)
-                                .position(x: steps[currentStepIndex].popUpX, y: steps[currentStepIndex].popUpY)
+                            VStack {
+                                if steps[currentStepIndex].arrowPosition == .top {
+                                    VStack {
+                                        ArrowView()
+                                            .frame(width: 30, height: 30)
+                                            .rotationEffect(.degrees(0))
+                                            .position(
+                                                x: geometry.size.width * steps[currentStepIndex].arrowX,
+                                                y: geometry.size.height * steps[currentStepIndex].arrowY
+                                            )
+                                        
+                                        GuidePopUpView(step: steps[currentStepIndex])
+                                            .padding(.bottom, 10)
+                                            .position(
+                                                x: geometry.size.width * steps[currentStepIndex].popUpX,
+                                                y: geometry.size.height * steps[currentStepIndex].popUpY
+                                            )
+                                    }
+                                } else {
+                                    Spacer()
+                                }
+                                
+                                Spacer()
+                                
+                                if steps[currentStepIndex].arrowPosition == .bottom {
+                                    VStack {
+                                        GuidePopUpView(step: steps[currentStepIndex])
+                                            .padding(.bottom, 10)
+                                            .position(
+                                                x: geometry.size.width * steps[currentStepIndex].popUpX,
+                                                y: geometry.size.height * steps[currentStepIndex].popUpY
+                                            )
+                                        
+                                        ArrowView()
+                                            .frame(width: 30, height: 30)
+                                            .rotationEffect(.degrees(180))
+                                            .position(
+                                                x: geometry.size.width * steps[currentStepIndex].arrowX,
+                                                y: geometry.size.height * steps[currentStepIndex].arrowY
+                                            )
+                                    }
+                                } else {
+                                    Spacer()
+                                }
+                            }
+                        }
+                        .onTapGesture {
+                            nextGuide()
                         }
                     } else {
-                        Spacer()
-                    }
-                    
-                    Spacer()
-                    
-                    if steps[currentStepIndex].arrowPosition == .bottom {
-                        VStack {
-                            GuidePopUpView(step: steps[currentStepIndex])
-                                .padding(.bottom, 10)
-                                .position(x: steps[currentStepIndex].popUpX, y: steps[currentStepIndex].popUpY)
-                            
-                            ArrowView()
-                                .frame(width: 30, height: 30)
-                                .rotationEffect(.degrees(180))
-                                .position(x: steps[currentStepIndex].arrowX, y: steps[currentStepIndex].arrowY)
+                        Button("Finish") {
+                            isPresented = false
                         }
-                    } else {
-                        Spacer()
-                    }
-                }
-            }
-            .onTapGesture {
-                nextGuide()
-            }
-        }
-        else if currentStepIndex < steps.count {
-            ZStack {
-                Color.black.opacity(0.3).edgesIgnoringSafeArea(.all)
-                
-                VStack {
-                    if steps[currentStepIndex].arrowPosition == .top {
-                        VStack {
-                            ArrowView()
-                                .frame(width: 30, height: 30)
-                                .rotationEffect(.degrees(0))
-                                .position(x: steps[currentStepIndex].arrowX, y: steps[currentStepIndex].arrowY)
-                            
-                            GuidePopUpView(step: steps[currentStepIndex])
-                                .padding(.bottom, 10)
-                                .position(x: steps[currentStepIndex].popUpX, y: steps[currentStepIndex].popUpY)
-                        }
-                    } else {
-                        Spacer()
-                    }
-                    
-                    Spacer()
-                    
-                    if steps[currentStepIndex].arrowPosition == .bottom {
-                        VStack {
-                            GuidePopUpView(step: steps[currentStepIndex])
-                                .padding(.bottom, 10)
-                                .position(x: steps[currentStepIndex].popUpX, y: steps[currentStepIndex].popUpY)
-                            
-                            ArrowView()
-                                .frame(width: 30, height: 30)
-                                .rotationEffect(.degrees(180))
-                                .position(x: steps[currentStepIndex].arrowX, y: steps[currentStepIndex].arrowY)
-                        }
-                    } else {
-                        Spacer()
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
                     }
                 }
             }
-            .onTapGesture {
-                nextGuide()
-            }
-        } else {
-            Button("Finish") {
-                isPresented = false
-            }
-            .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-        }
-    }
     
     func nextGuide() {
         if currentStepIndex == 0 {

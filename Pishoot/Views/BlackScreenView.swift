@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BlackScreenView: View {
-   @Binding var animationProgress: CGFloat
+    @Binding var animationProgress: CGFloat
     
     var body: some View {
         ZStack {
@@ -22,20 +22,8 @@ struct BlackScreenView: View {
                     .padding(.bottom, 10)
                 ProgressView(value: animationProgress)
                     .progressViewStyle(LinearProgressViewStyle(tint: Color("pishootYellow")))
-                                   .padding()
-//                GeometryReader { geometry in
-//                    ZStack(alignment: .leading) {
-//                        Rectangle()
-//                            .fill(Color.gray.opacity(0.3))
-//                            .frame(height: 4)
-//                        
-//                        Rectangle()
-//                            .fill(Color("pishootYellow"))
-//                            .frame(width: geometry.size.width * progress, height: 4)
-//                            .animation(.linear, value: progress)
-//                    }
-//                }
-                .frame(width: UIScreen.main.bounds.width * 0.7, height: 4)
+                    .padding()
+                    .frame(width: UIScreen.main.bounds.width * 0.7, height: 4)
             }
         }
     }

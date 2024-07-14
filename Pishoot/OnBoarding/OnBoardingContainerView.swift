@@ -29,7 +29,6 @@ struct OnBoardingContainerView: View {
                 })
             }
         }
-        .frame(width: 393, height: 852)
         .background(Color(red: 0.19, green: 0.19, blue: 0.19))
     }
     

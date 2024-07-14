@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		0F05D7012C35985400F961C7 /* BlackScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F05D7002C35985400F961C7 /* BlackScreenView.swift */; };
+		0F3E79912C42CB190057F279 /* DeviceOrientationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F3E79902C42CB190057F279 /* DeviceOrientationManager.swift */; };
 		0F7399CA2C38531500324891 /* OnBoardingContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399C92C38531500324891 /* OnBoardingContainerView.swift */; };
 		0F7399CC2C38534900324891 /* OnBoardingDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399CB2C38534900324891 /* OnBoardingDataModel.swift */; };
 		0F7399CE2C38536900324891 /* OnBoardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399CD2C38536900324891 /* OnBoardingView.swift */; };
-		0F7399D02C38539300324891 /* CustomLinearProgressViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399CF2C38539300324891 /* CustomLinearProgressViewStyle.swift */; };
 		0F7399D22C3853CB00324891 /* WelcomeOnBoarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399D12C3853CB00324891 /* WelcomeOnBoarding.swift */; };
 		0F7399D72C38615C00324891 /* ArrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399D62C38615C00324891 /* ArrowView.swift */; };
 		0F7399D92C3861BF00324891 /* GuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7399D82C3861BF00324891 /* GuideView.swift */; };
@@ -71,10 +71,10 @@
 
 /* Begin PBXFileReference section */
 		0F05D7002C35985400F961C7 /* BlackScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackScreenView.swift; sourceTree = "<group>"; };
+		0F3E79902C42CB190057F279 /* DeviceOrientationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceOrientationManager.swift; sourceTree = "<group>"; };
 		0F7399C92C38531500324891 /* OnBoardingContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingContainerView.swift; sourceTree = "<group>"; };
 		0F7399CB2C38534900324891 /* OnBoardingDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingDataModel.swift; sourceTree = "<group>"; };
 		0F7399CD2C38536900324891 /* OnBoardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingView.swift; sourceTree = "<group>"; };
-		0F7399CF2C38539300324891 /* CustomLinearProgressViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomLinearProgressViewStyle.swift; sourceTree = "<group>"; };
 		0F7399D12C3853CB00324891 /* WelcomeOnBoarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeOnBoarding.swift; sourceTree = "<group>"; };
 		0F7399D62C38615C00324891 /* ArrowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrowView.swift; sourceTree = "<group>"; };
 		0F7399D82C3861BF00324891 /* GuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideView.swift; sourceTree = "<group>"; };
@@ -125,13 +125,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0F3E798F2C42CAFB0057F279 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				E9E5A4802C354500005EB61A /* CameraManager.swift */,
+				0F3E79902C42CB190057F279 /* DeviceOrientationManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
 		0F7399C82C3852D700324891 /* OnBoarding */ = {
 			isa = PBXGroup;
 			children = (
 				0F7399C92C38531500324891 /* OnBoardingContainerView.swift */,
 				0F7399CB2C38534900324891 /* OnBoardingDataModel.swift */,
 				0F7399CD2C38536900324891 /* OnBoardingView.swift */,
-				0F7399CF2C38539300324891 /* CustomLinearProgressViewStyle.swift */,
 				0F7399D12C3853CB00324891 /* WelcomeOnBoarding.swift */,
 			);
 			path = OnBoarding;
@@ -172,6 +180,7 @@
 		0F8458D12C2AB4130033FED7 /* Pishoot */ = {
 			isa = PBXGroup;
 			children = (
+				0F3E798F2C42CAFB0057F279 /* Manager */,
 				0F7399E22C386CE600324891 /* AppState.swift */,
 				0F7399D32C385E7D00324891 /* AppGuide */,
 				0F7399C82C3852D700324891 /* OnBoarding */,
@@ -212,7 +221,6 @@
 		0F8458E12C2AB7400033FED7 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				E9E5A4802C354500005EB61A /* CameraManager.swift */,
 				0F8458E42C2AB8800033FED7 /* CameraViewModel.swift */,
 			);
 			path = ViewModels;
@@ -369,9 +377,9 @@
 				0F7399D22C3853CB00324891 /* WelcomeOnBoarding.swift in Sources */,
 				0F8458D32C2AB4130033FED7 /* PishootApp.swift in Sources */,
 				0F7399CC2C38534900324891 /* OnBoardingDataModel.swift in Sources */,
+				0F3E79912C42CB190057F279 /* DeviceOrientationManager.swift in Sources */,
 				0F8458F52C2BB7AB0033FED7 /* MainAdditionalSetting.swift in Sources */,
 				0F8458E92C2AB9170033FED7 /* CameraPreviewView.swift in Sources */,
-				0F7399D02C38539300324891 /* CustomLinearProgressViewStyle.swift in Sources */,
 				0F8458EF2C2ABA2C0033FED7 /* BottomBarView.swift in Sources */,
 				0F7399DB2C3862BB00324891 /* GuideStep.swift in Sources */,
 				279E1D9F2C36E21D0078C2A1 /* Marker.swift in Sources */,
